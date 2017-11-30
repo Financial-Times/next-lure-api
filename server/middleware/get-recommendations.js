@@ -1,11 +1,25 @@
 const logger = require('@financial-times/n-logger').default;
-const { relatedContent, topStories, timeRelevantRecommendations } = require('../signals');
+const { relatedContent, topStories, timeRelevantRecommendations, essentialStories } = require('../signals');
+
+async function getRecommendataions (req, res, signalStack) {
+	let result;
+	let signal;
+	while (signal = signalStack.shift()) {
+		result = await signal(res.locals.content, { locals: res.locals, query: req.query });
+		if (result) {
+			break;
+		}
+	}
+	return result;
+};
+
 
 module.exports = async (req, res, next) => {
 	try {
 		let recommendations;
 
 		const signalStack = [relatedContent];
+		const signalStackForOverwrite = []; // for overwirtting only rhr/ribbon or onward recommendations not both
 
 		if (res.locals.flags.lureTopStories) {
 			signalStack.unshift(topStories);
@@ -15,14 +29,24 @@ module.exports = async (req, res, next) => {
 			signalStack.unshift(timeRelevantRecommendations);
 		}
 
-		let signal;
+		if (res.locals.flags.refererCohort === 'search' && res.locals.content._editorialComponents.length > 0) {
+			signalStackForOverwrite.unshift(essentialStories);
+		}
 
-		while (signal = signalStack.shift()) {
-			recommendations = await signal(res.locals.content, { locals: res.locals, query: req.query});
-			if (recommendations) {
-				break;
+		recommendations = await getRecommendataions(req, res, signalStack);
+
+		if (signalStackForOverwrite.length > 0) {
+			const recommendationsForOverwrite = await getRecommendataions(req, res, signalStack);
+			if (recommendationsForOverwrite) {
+				return recommendations;
+			}
+			if (recommendationsForOverwrite.rhr) {
+				recommendations.rhr = recommendationsForOverwrite.rhr
+			} else if (recommendationsForOverwrite.onward) {
+				recommendations.onward = recommendationsForOverwrite.onward
 			}
 		}
+
 		res.locals.recommendations = recommendations;
 		next();
 	} catch (err) {
