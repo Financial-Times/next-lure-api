@@ -126,6 +126,22 @@ describe('get recommendations', () => {
 			expect(signalStubs.timeRelevantRecommendations.notCalled).to.be.true;
 		});
 
+		it('fallback to next signal when no essentialStories results', async () => {
+			const mocks = getMockArgs(sandbox);
+			mocks[1].locals.flags.cleanOnwardJourney = true;
+			mocks[1].locals.flags.refererCohort = 'search';
+			mocks[1].locals.content._editorialComponents = ['editorial component'];
+			mocks[1].locals.slots= { ribbon: true, onward: true };
+			signalStubs.essentialStories.returns(Promise.resolve(null));
+			signalStubs.relatedContent.returns(Promise.resolve({ ribbon: 'from Related Content', onward: 'from Related Content' }));
+			await middleware(...mocks);
+			expect(mocks[1].locals.recommendations).to.eql({ ribbon: 'from Related Content', onward: 'from Related Content' });
+			expect(signalStubs.essentialStories.calledOnce).to.be.true;
+			expect(signalStubs.relatedContent.calledOnce).to.be.true;
+			expect(signalStubs.topStories.notCalled).to.be.true;
+			expect(signalStubs.timeRelevantRecommendations.notCalled).to.be.true;
+		});
+
 	});
 
 });
