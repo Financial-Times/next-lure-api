@@ -1,4 +1,8 @@
-module.exports = (content, { locals: { q1Length }}) => {
+module.exports = (content, {locals: {slots, q1Length}}) => {
+
+	if (!slots.ribbon) {
+		return null;
+	}
 
 	const response = {};
 	const model = {
