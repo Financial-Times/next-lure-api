@@ -16,7 +16,7 @@ module.exports = (content, { locals: { q1Length }}) => {
 		return null;
 	}
 
-	response.rhr = Object.assign({
+	response.ribbon = Object.assign({
 		items: allStories.slice(0, q1Length)
 	}, model);
 
