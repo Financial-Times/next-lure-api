@@ -1,5 +1,5 @@
 const logger = require('@financial-times/n-logger').default;
-const { relatedContent, topStories, timeRelevantRecommendations } = require('../signals');
+const { relatedContent, topStories, timeRelevantRecommendations, essentialStories } = require('../signals');
 
 const modelIsFulfilled = (slots, model) => {
 	return !Object.keys(excludeCompletedSlots(slots, model)).length
