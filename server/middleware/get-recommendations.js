@@ -42,7 +42,6 @@ module.exports = async (req, res, next) => {
 			const newRecommendations = await signal(res.locals.content, { locals: Object.assign({}, res.locals, {
 				slots: excludeCompletedSlots(res.locals.slots, recommendations)
 			}), query: req.query});
-
 			recommendations = Object.assign(recommendations, newRecommendations);
 		}
 
