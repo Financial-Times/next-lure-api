@@ -37,10 +37,11 @@ v1.get('/content/:contentId', (req, res, next) => {
 }, middlewareStack);
 
 v2.get('/content/:contentId', (req, res, next) => {
+	res.locals.flags.cleanOnwardJourney ? 8 : [3, 3]
 	res.locals.modelTemplate = {
-		listName: 'items',
-		ribbon: 5
+		listName: 'items'
 	};
+	res.locals.modelTemplate.ribbon = res.locals.flags.cleanOnwardJourney ? 4 : 5;
 	res.locals.modelTemplate.onward = res.locals.flags.cleanOnwardJourney ? 8 : [3, 3];
 	next();
 }, middlewareStack);

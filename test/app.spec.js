@@ -125,7 +125,7 @@ describe('lure e2e', () => {
 					.get('/lure/v2/content/uuid')
 					.set('ft-flags', 'cleanOnwardJourney:on')
 					.then(({body}) => {
-						expect(body.ribbon.items.length).to.equal(5);
+						expect(body.ribbon.items.length).to.equal(4);
 						expect(Array.isArray(body.onward)).to.be.false;
 						expect(body.onward.items.length).to.equal(8);
 						expect(uniqueIds('items', [body.onward])).to.be.true;
@@ -173,7 +173,7 @@ describe('lure e2e', () => {
 					.get('/lure/v2/content/uuid')
 					.set('ft-flags', 'cleanOnwardJourney:on')
 					.then(({body}) => {
-						expect(body.ribbon.items.length).to.equal(5);
+						expect(body.ribbon.items.length).to.equal(4);
 						expect(Array.isArray(body.onward)).to.be.false;
 						expect(body.onward.items.length).to.equal(8);
 						expect(uniqueIds('items', [body.onward])).to.be.true;
