@@ -39,7 +39,8 @@ describe('get recommendations', () => {
 		signalStubs = {
 			topStories: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots),
 			relatedContent: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots),
-			timeRelevantRecommendations: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots)
+			timeRelevantRecommendations: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots),
+			essentialStories: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots)
 		};
 		middleware = proxyquire('../../server/middleware/get-recommendations', {
 			'../signals': signalStubs
@@ -97,4 +98,16 @@ describe('get recommendations', () => {
 			expect(signalStubs.timeRelevantRecommendations.calledOnce).to.be.true;
 		});
 	});
+
+	context('essential stories', () => {
+		it('use essential stories when cleanOnwardJourney flag is on, refererCohort flag is search, and content._editorialComponents is defined', async () => {
+			const mocks = getMockArgs(sandbox);
+			mocks[1].locals.flags.cleanOnwardJourney = true;
+			mocks[1].locals.flags.refererCohort = 'search';
+			mocks[1].locals.content._editorialComponents = ['editorial component'];
+			await middleware(...mocks);
+			expect(signalStubs.essentialStories.calledOnce).to.be.true;
+		});
+	});
+
 });
