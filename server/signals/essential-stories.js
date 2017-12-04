@@ -22,6 +22,10 @@ module.exports = (content, {locals: {slots, q1Length}}) => {
 
 	response.ribbon = Object.assign({
 		items: allStories.slice(0, q1Length)
+			.map(item => {
+				item.originator = 'essential-stories';
+				return item;
+			});
 	}, model);
 
 	return response;
