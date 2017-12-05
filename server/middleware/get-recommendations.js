@@ -1,5 +1,5 @@
 const logger = require('@financial-times/n-logger').default;
-const { relatedContent, topStories, timeRelevantRecommendations, essentialStories } = require('../signals');
+const { relatedContent, topStories, timeRelevantRecommendations, essentialStories, myFtRecommendations } = require('../signals');
 
 const modelIsFulfilled = (slots, model) => {
 	return !Object.keys(excludeCompletedSlots(slots, model)).length
@@ -19,6 +19,11 @@ module.exports = async (req, res, next) => {
 		let recommendations = {};
 
 		const signalStack = [relatedContent];
+
+		//TODO place correctly following the recommendations' priority
+		if (res.locals.flags.myFtApi && res.locals.flags.lureMyFtRecommendations) {
+			signalStack.unshift(myFtRecommendations);
+		}
 
 		if (res.locals.flags.lureTopStories) {
 			signalStack.unshift(topStories);
