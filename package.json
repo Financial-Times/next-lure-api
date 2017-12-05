@@ -26,6 +26,7 @@
     "@financial-times/n-express": "^19.3.1",
     "@financial-times/n-logger": "^5.5.7",
     "@financial-times/n-teaser": "^4.7.0",
+    "fetchres": "^1.7.2",
     "forever": "^0.15.3",
     "ft-poller": "^3.0.0",
     "n-health": "^2.1.0"

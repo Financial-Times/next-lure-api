@@ -1,4 +1,4 @@
-const crossDomainFetch = require('o-fetch-jsonp').default;
+const fetchres = require('fetchres');
 const getRelatedContent = require('../lib/get-related-content');
 const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // condense multiple spaces to one
 
@@ -47,10 +47,10 @@ module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) 
 
 	const url = `https://next-api.ft.com/v2/query?query=${slimQuery(query)}&variables=${userId}&source=next-front-page-myft`;
 
-	return crossDomainFetch(url, { credentials: 'include', timeout: 5000 })
-		.then(fetchJson)
+	return fetch(url, { credentials: 'include', timeout: 5000 })
+		.then(fetchres.json)
 		.then(({ data } = {}) => data)
-		.then(data => {
+		.then(async data => {
 
 			const response = {};
 			response.ribbon = Object.assign({
