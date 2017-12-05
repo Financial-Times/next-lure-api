@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const subject = require('../../server/signals/myft-recommendations');
-
+let params;
 
 describe('myFT Recommendations', () => {
 
@@ -9,8 +9,10 @@ describe('myFT Recommendations', () => {
 	});
 
 	it('should return correct response', () => {
-		const result = subject({}, params);
-		expect(result).to.eql({});
+		return subject({}, params)
+			.then(result => {
+				expect(result).to.eql({ data : { popularConcepts : [], user: { followed: [] } }});
+			})
 	});
 
 });

@@ -1,4 +1,6 @@
+const fetch = require('node-fetch');
 const fetchres = require('fetchres');
+const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getRelatedContent = require('../lib/get-related-content');
 const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // condense multiple spaces to one
 
@@ -45,19 +47,26 @@ module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) 
 		return null;
 	}
 
-	const url = `https://next-api.ft.com/v2/query?query=${slimQuery(query)}&variables=${userId}&source=next-front-page-myft`;
+	const variables = { uuid: userId };
+	const url = `https://next-api.ft.com/v2/query?query=${slimQuery(query)}&variables=${JSON.stringify(variables)}&source=next-front-page-myft`;
 
-	return fetch(url, { credentials: 'include', timeout: 5000 })
+	return fetch(url, { headers: {'X-Api-Key': process.env.API_KEY }, timeout: 5000 })
 		.then(fetchres.json)
 		.then(({ data } = {}) => data)
 		.then(async data => {
 
 			const response = {};
+			const model = {
+				title: 'More from myFT', //TODO set proper title
+				titleHref: `/myft/${userId}`
+			};
+
 			response.ribbon = Object.assign({
 				items: data.slice(0, q1Length)
-			}, topStoriesModel);
+			}, model);
 
 			if (slots.onward) {
+				const concepts = getMostRelatedConcepts(content);
 				const secondaryOnward = await getRelatedContent(concepts[0], q2Length, content.id);
 				response.onward = [
 					Object.assign({}, response.ribbon),
