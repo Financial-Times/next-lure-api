@@ -37,7 +37,6 @@ v1.get('/content/:contentId', (req, res, next) => {
 }, middlewareStack);
 
 v2.get('/content/:contentId', (req, res, next) => {
-	res.locals.flags.cleanOnwardJourney ? 8 : [3, 3]
 	res.locals.modelTemplate = {
 		listName: 'items'
 	};

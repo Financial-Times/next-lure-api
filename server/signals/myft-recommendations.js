@@ -1,7 +1,4 @@
-const fetch = require('node-fetch');
 const fetchres = require('fetchres');
-const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
-const getRelatedContent = require('../lib/get-related-content');
 const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // condense multiple spaces to one
 const { extractArticlesFromConcepts, doesUserFollowConcepts } = require('../lib/transform-myft-data');
 
@@ -42,12 +39,11 @@ const query = `
 	}
 `;
 
-module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) => {
+module.exports = async (content, {locals: {slots, userId, q2Length}}) => {
 
-	if (!userId) {
+	if (!userId || !slots.onward) {
 		return null;
 	}
-
 	const variables = { uuid: userId };
 	const url = `https://next-api.ft.com/v2/query?query=${slimQuery(query)}&variables=${JSON.stringify(variables)}&source=next-front-page-myft`;
 
@@ -58,28 +54,13 @@ module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) 
 		.then(extractArticlesFromConcepts)
 		.then(async ({ articles } = {}) => {
 
-			if (!articles) {
+			if (!articles || articles.length < q2Length) {
 				return null;
 			}
 
 			const response = {};
-			const model = {
-				title: 'More from myFT', //TODO set proper title
-				titleHref: `/myft/${userId}`
-			};
+			response.onward = { items: articles.slice(0, q2Length) };
 
-			response.ribbon = Object.assign({
-				items: articles.slice(0, q1Length)
-			}, model);
-
-			if (slots.onward) {
-				const concepts = getMostRelatedConcepts(content);
-				const secondaryOnward = await getRelatedContent(concepts[0], q2Length, content.id);
-				response.onward = [
-					Object.assign({}, response.ribbon),
-					secondaryOnward
-				];
-			}
 			return response;
 
 		})

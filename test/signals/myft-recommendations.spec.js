@@ -20,12 +20,12 @@ describe('myFT Recommendations', () => {
 	beforeEach(() => {
 		stubs.fetch.returns(Promise.resolve());
 		stubs.fetchres.json.returns({ data: {user: {followed: []}}});
-		stubs.transformMyftData.extractArticlesFromConcepts.returns(Promise.resolve({ followsConcepts: true, articles: ['article1','article2','article3','article4','article5',] }));
+		stubs.transformMyftData.extractArticlesFromConcepts.returns(Promise.resolve({ followsConcepts: true, articles: ['article1','article2','article3','article4','article5','article6','article7','article8'] }));
 		params = {
 			locals: {
-				slots: { ribbon: true },
+				slots: { onward: true },
 				userId:'00000000-0000-0000-0000-000000000000',
-				q1Length: 5
+				q2Length: 8
 			}
 		};
 	});
@@ -40,10 +40,8 @@ describe('myFT Recommendations', () => {
 
 	it('should return correct response', () => {
 		const correctResponse = {
-			'ribbon': {
-				'items': [ 'article1', 'article2', 'article3', 'article4', 'article5' ],
-				'title': 'More from myFT',
-				'titleHref': '/myft/00000000-0000-0000-0000-000000000000'
+			'onward': {
+				'items': [ 'article1', 'article2', 'article3', 'article4', 'article5', 'article6', 'article7', 'article8' ]
 			}
 		};
 
