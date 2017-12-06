@@ -12,7 +12,6 @@ const subject = proxyquire('../../server/signals/myft-recommendations', {
 	'fetchres': stubs.fetchres,
 	'../lib/transform-myft-data': stubs.transformMyftData
 });
-// const subject = require('../../server/signals/myft-recommendations');
 
 let params;
 
