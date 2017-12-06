@@ -3,6 +3,13 @@ const fetchres = require('fetchres');
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getRelatedContent = require('../lib/get-related-content');
 const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // condense multiple spaces to one
+const extractArticlesFromConcepts = require('../lib/transform-myft-data');
+const doesUserFollowConcepts = (followedConcepts) => {
+	return {
+		followsConcepts: Boolean(followedConcepts.length),
+		followedConcepts
+	};
+};
 
 const basicFragment = `
 	fragment Basic on Concept {
@@ -50,10 +57,16 @@ module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) 
 	const variables = { uuid: userId };
 	const url = `https://next-api.ft.com/v2/query?query=${slimQuery(query)}&variables=${JSON.stringify(variables)}&source=next-front-page-myft`;
 
-	return fetch(url, { headers: {'X-Api-Key': process.env.API_KEY }, timeout: 5000 })
+	return fetch(url, { headers: {'X-Api-Key': process.env.NEXT_API_KEY }, timeout: 5000 })
 		.then(fetchres.json)
-		.then(({ data } = {}) => data)
-		.then(async data => {
+		.then(({ data: {user: {followed = []}}} = {}) => followed)
+		.then(doesUserFollowConcepts)
+		.then(extractArticlesFromConcepts)
+		.then(async ({ articles } = {}) => {
+
+			if (!articles) {
+				return null;
+			}
 
 			const response = {};
 			const model = {
@@ -62,7 +75,7 @@ module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) 
 			};
 
 			response.ribbon = Object.assign({
-				items: data.slice(0, q1Length)
+				items: articles.slice(0, q1Length)
 			}, model);
 
 			if (slots.onward) {
@@ -79,4 +92,5 @@ module.exports = async (content, {locals: {slots, userId, q1Length, q2Length}}) 
 		.catch(() => {
 			return null;
 		});
+
 };
