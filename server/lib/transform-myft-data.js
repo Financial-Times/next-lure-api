@@ -1,3 +1,5 @@
+//These functions come form next-front-page/client/components/myft/v2
+
 const followedConcept = (article, concept = {}) => {
 	const followedConcept = Object.assign({}, concept);
 	delete followedConcept.latestContent;
