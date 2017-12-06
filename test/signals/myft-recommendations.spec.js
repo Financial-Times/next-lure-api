@@ -4,13 +4,13 @@ const sandbox = sinon.sandbox.create();
 const stubs = {
 	fetch: sandbox.stub(),
 	fetchres: { json: sandbox.stub() },
-	extractArticlesFromConcepts: sandbox.stub()
+	transformMyftData: { extractArticlesFromConcepts: sandbox.stub() }
 }
 const proxyquire = require('proxyquire');
 const subject = proxyquire('../../server/signals/myft-recommendations', {
 	'node-fetch': stubs.fetch,
 	'fetchres': stubs.fetchres,
-	'../lib/transform-myft-data': stubs.extractArticlesFromConcepts
+	'../lib/transform-myft-data': stubs.transformMyftData
 });
 // const subject = require('../../server/signals/myft-recommendations');
 
@@ -21,7 +21,7 @@ describe('myFT Recommendations', () => {
 	beforeEach(() => {
 		stubs.fetch.returns(Promise.resolve());
 		stubs.fetchres.json.returns({ data: {user: {followed: []}}});
-		stubs.extractArticlesFromConcepts.returns(Promise.resolve({ followsConcepts: true, articles: ['article1','article2','article3','article4','article5',] }));
+		stubs.transformMyftData.extractArticlesFromConcepts.returns(Promise.resolve({ followsConcepts: true, articles: ['article1','article2','article3','article4','article5',] }));
 		params = {
 			locals: {
 				slots: { ribbon: true },

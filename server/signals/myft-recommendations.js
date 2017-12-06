@@ -3,13 +3,7 @@ const fetchres = require('fetchres');
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getRelatedContent = require('../lib/get-related-content');
 const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // condense multiple spaces to one
-const extractArticlesFromConcepts = require('../lib/transform-myft-data');
-const doesUserFollowConcepts = (followedConcepts) => {
-	return {
-		followsConcepts: Boolean(followedConcepts.length),
-		followedConcepts
-	};
-};
+const { extractArticlesFromConcepts, doesUserFollowConcepts } = require('../lib/transform-myft-data');
 
 const basicFragment = `
 	fragment Basic on Concept {

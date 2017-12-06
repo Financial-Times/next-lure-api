@@ -18,8 +18,7 @@ const removeDuplicateArticles = (articles, article) => {
 
 const orderByDate = (articleOne, articleTwo) => new Date(articleTwo.publishedDate) - new Date(articleOne.publishedDate);
 
-
-module.exports = (data) => {
+const extractArticlesFromConcepts = (data) => {
 
 	if (!data.followsConcepts) {
 		return data;
@@ -41,4 +40,17 @@ module.exports = (data) => {
 
 	return data;
 
+};
+
+const doesUserFollowConcepts = (followedConcepts) => {
+	return {
+		followsConcepts: Boolean(followedConcepts.length),
+		followedConcepts
+	};
+};
+
+
+module.exports = {
+	doesUserFollowConcepts,
+	extractArticlesFromConcepts
 };
