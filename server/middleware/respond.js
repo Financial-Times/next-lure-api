@@ -37,13 +37,19 @@ module.exports = (req, res) => {
 	}
 
 	if (recommendations.onward) {
-		const onwardAsArray = Array.isArray(recommendations.onward) ? recommendations.onward : [recommendations.onward];
 
-		if (Array.isArray(onward)) {
+		if (!Array.isArray(onward)) {
+			response.onward = finishModel(recommendations.onward, listName, onward);
+
+		} else {
+
+			const onwardAsArray = Array.isArray(recommendations.onward) ? recommendations.onward : [recommendations.onward];
 			response.onward = [
 				finishModel(onwardAsArray[0], listName, onward[0])
 			];
+
 			let secondOnward;
+
 			if (onwardAsArray[1]) {
 				secondOnward = Object.assign({}, onwardAsArray[1], {
 					items: dedupeById(onwardAsArray[1].items, response.onward[0][listName])
@@ -54,20 +60,8 @@ module.exports = (req, res) => {
 					items: onwardAsArray[0].items.slice(onward[0])
 				})
 			}
-
 			response.onward.push(finishModel(secondOnward, listName, onward[1]));
-		} else {
-			// todo merge with onward[1]
-			if (onwardAsArray[1]) {
-				response.onward = finishModel(Object.assign({}, recommendations.onward[0], {
-					items: dedupeById(
-						recommendations.onward[0].items.slice(0, onward / 2)
-							.concat(recommendations.onward[1].items)
-					).slice(0, onward)
-				}), listName, onward);
-			} else {
-				response.onward = finishModel(onwardAsArray[0], listName, onward)
-			}
+
 		}
 	}
 
