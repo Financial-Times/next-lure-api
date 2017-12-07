@@ -8,17 +8,14 @@ const stubs = {
 }
 const proxyquire = require('proxyquire');
 const subject = proxyquire('../../server/signals/myft-recommendations', {
-	'node-fetch': stubs.fetch,
 	'fetchres': stubs.fetchres,
 	'../lib/transform-myft-data': stubs.transformMyftData
 });
-
 let params;
 
 describe('myFT Recommendations', () => {
 
 	beforeEach(() => {
-		stubs.fetch.returns(Promise.resolve());
 		stubs.fetchres.json.returns({ data: {user: {followed: []}}});
 		stubs.transformMyftData.extractArticlesFromConcepts.returns(Promise.resolve({ followsConcepts: true, articles: ['article1','article2','article3','article4','article5','article6','article7','article8'] }));
 		params = {

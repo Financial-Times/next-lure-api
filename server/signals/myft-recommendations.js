@@ -49,7 +49,7 @@ module.exports = async (content, {locals: {slots, userId, q2Length}}) => {
 
 	return fetch(url, { headers: {'X-Api-Key': process.env.NEXT_API_KEY }, timeout: 5000 })
 		.then(fetchres.json)
-		.then(({ data: {user: {followed = []}}} = {}) => followed)
+		.then(({ data: {user: {followed = []}}} = {}) => followed )
 		.then(doesUserFollowConcepts)
 		.then(extractArticlesFromConcepts)
 		.then(async ({ articles } = {}) => {
