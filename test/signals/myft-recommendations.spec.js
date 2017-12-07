@@ -37,8 +37,10 @@ describe('myFT Recommendations', () => {
 
 	it('should return correct response', () => {
 		const correctResponse = {
-			'onward': {
-				'items': [ 'article1', 'article2', 'article3', 'article4', 'article5', 'article6', 'article7', 'article8' ]
+			onward: {
+				title: 'More from myFT',
+				titleHref: '/myft/00000000-0000-0000-0000-000000000000',
+				items: [ 'article1', 'article2', 'article3', 'article4', 'article5', 'article6', 'article7', 'article8' ]
 			}
 		};
 

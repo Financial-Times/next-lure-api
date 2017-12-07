@@ -59,7 +59,14 @@ module.exports = async (content, {locals: {slots, userId, q2Length}}) => {
 			}
 
 			const response = {};
-			response.onward = { items: articles.slice(0, q2Length) };
+			const model = {
+				title: 'More from myFT', //TODO set proper title
+				titleHref: `/myft/${userId}`
+			};
+
+			response.onward = Object.assign({
+				items: articles.slice(0, q2Length)
+			}, model);
 
 			return response;
 
