@@ -2,39 +2,36 @@ const fetchres = require('fetchres');
 const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // condense multiple spaces to one
 const { extractArticlesFromConcepts, doesUserFollowConcepts } = require('../lib/transform-myft-data');
 
-const basicFragment = `
-	fragment Basic on Concept {
+const fragments = require('@financial-times/n-teaser').fragments;
+const basicConceptWithArticles = `
+	fragment BasicConceptWithArticles on Concept {
 		type: __typename
 		id
 		prefLabel
 		name: prefLabel
 		url
-		relativeUrl
 		directType
-		latestContent(limit: 6) {
-			id
-			url
-			title
-			isPremium
-			... on Article {
-				isPodcast
-			}
-			mainImage {
-				url
-			}
+		relativeUrl
+		latestContent(limit: 12) {
+			... TeaserLifestyle
+			... TeaserStandard
+			... TeaserHeavy
 		}
 	}
 `;
 
 const query = `
-	${basicFragment}
+	${fragments.teaserLifestyle}
+	${fragments.teaserStandard}
+	${fragments.teaserHeavy}
+	${basicConceptWithArticles}
 	query MyFT($uuid: String!) {
 		popularConcepts(limit: 4, excludeTypes:["http://www.ft.com/ontology/Genre","http://www.ft.com/ontology/Section","http://www.ft.com/ontology/Location"]) {
-			... Basic
-		}
+			... BasicConceptWithArticles
+		},
 		user(uuid: $uuid) {
-			followed(limit: 4) {
-				... Basic
+			followed(limit: 30, orderBy: lastPublished) {
+				... BasicConceptWithArticles
 			}
 		}
 	}
