@@ -61,7 +61,7 @@ module.exports = async (content, {locals: {slots, userId, q2Length}}) => {
 
 			const response = {};
 			const model = {
-				title: 'More from myFT', //TODO set proper title
+				title: 'Your latest myFT stories',
 				titleHref: `/myft/${userId}`
 			};
 
