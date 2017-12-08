@@ -3,6 +3,7 @@ const slimQuery = query => encodeURIComponent(query.replace(/\s+/g, ' ')); // co
 const { extractArticlesFromConcepts, doesUserFollowConcepts } = require('../lib/transform-myft-data');
 
 const fragments = require('@financial-times/n-teaser').fragments;
+
 const basicConceptWithArticles = `
 	fragment BasicConceptWithArticles on Concept {
 		type: __typename
@@ -13,7 +14,8 @@ const basicConceptWithArticles = `
 		directType
 		relativeUrl
 		latestContent(limit: 12) {
-			... TeaserLifestyle
+			... TeaserExtraLight
+			... TeaserLight
 			... TeaserStandard
 			... TeaserHeavy
 		}
@@ -21,7 +23,8 @@ const basicConceptWithArticles = `
 `;
 
 const query = `
-	${fragments.teaserLifestyle}
+	${fragments.teaserExtraLight}
+	${fragments.teaserLight}
 	${fragments.teaserStandard}
 	${fragments.teaserHeavy}
 	${basicConceptWithArticles}
