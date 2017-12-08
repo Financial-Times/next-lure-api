@@ -17,8 +17,7 @@ module.exports = (content, {locals: {slots, q1Length}}) => {
 	})
 
 	//avoid stories doesn't have relativeUrl to set n-teaser
-	const storiesHaveRelativeUrl = allStories.map(story => story.type !== 'non-article' ? story : false )
-		.filter(story => !!story);
+	const storiesHaveRelativeUrl = allStories.filter(story => story.type !== 'non-article');
 
 	if (storiesHaveRelativeUrl.length < q1Length) {
 		return null;
