@@ -51,4 +51,19 @@ describe('essential-stories signal', () => {
 		expect(result.ribbon.items).to.eql(['story1', 'story2', 'story3', 'story4', 'story5']);
 	});
 
+	it('should not pass stories which the type is non-article', () => {
+		const fiveArticles = [
+			{ type: 'article', id: 1 },
+			{ type: 'article', id: 2 },
+			{ type: 'article', id: 3 },
+			{ type: 'article', id: 4 },
+			{ type: 'article', id: 5 }
+		];
+		content._editorialComponents = [{
+			stories: [ { type: 'non-article' } ].concat(fiveArticles)
+		}];
+		const result = subject(content, params);
+		expect(result.ribbon.items).to.eql(fiveArticles);
+	})
+
 });
