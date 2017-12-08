@@ -23,7 +23,6 @@ module.exports = async (req, res, next) => {
 		//TODO place correctly following the recommendations' priority
 		if (res.locals.flags.myFtApi
 			&& res.locals.flags.lureMyFtRecommendations
-			&& res.locals.flags.cleanOnwardJourney
 		) {
 			signalStack.unshift(myFtRecommendations);
 		}
