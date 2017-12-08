@@ -9,6 +9,7 @@ const basicFragment = `
 		prefLabel
 		name: prefLabel
 		url
+		relativeUrl
 		directType
 		latestContent(limit: 6) {
 			id
