@@ -24,13 +24,17 @@ module.exports = async (content, {locals: {edition, slots, q1Length, q2Length}})
 
 	const response = {};
 
-	response.ribbon = Object.assign({
+	const commonPart = Object.assign({
 		items: topStories.slice(0, q1Length)
 	}, topStoriesModel);
 
+	if (slots.ribbon) {
+		response.ribbon = commonPart;
+	}
+
 	if (slots.onward) {
 		response.onward = [
-			Object.assign({}, response.ribbon),
+			Object.assign({}, commonPart),
 		];
 		if (concepts && concepts[0]) {
 			const secondaryOnward = await getRelatedContent(concepts[0], q2Length, content.id);
