@@ -16,7 +16,7 @@ const eightArticleIds = ['id-1','id-2','id-3','id-4','id-5','id-6','id-7','id-8'
 const eightArticles = ['article1', 'article2', 'article3', 'article4', 'article5', 'article6', 'article7', 'article8'];
 let params;
 
-describe.only('myFT Recommendations', () => {
+describe('myFT Recommendations', () => {
 
 	beforeEach(() => {
 		stubs.fetchres.json.returns(eightArticleIds);
@@ -45,12 +45,28 @@ describe.only('myFT Recommendations', () => {
 			})
 	});
 
+	it('should return null if article data from es is not fetched', () => {
+		stubs.es.mget.returns( Promise.reject() );
+		return subject({}, params)
+			.then(result => {
+				expect(result).to.equal(null);
+			})
+	});
+
+	it('should return null if article data from es is less than q2Length', () => {
+		stubs.es.mget.returns( Promise.resolve(['article1']) );
+		return subject({}, params)
+			.then(result => {
+				expect(result).to.equal(null);
+			})
+	});
+
 	it('should call es client with correct arguments', () => {
 		const correctArg = {
 			docs: eightArticleIds.map(id => ({ _id: id, _source: TEASER_PROPS }))
 		};
 		return subject({}, params)
-			.then(result => {
+			.then(() => {
 				expect(stubs.es.mget.calledWith(correctArg)).to.be.true;
 			})
 	});

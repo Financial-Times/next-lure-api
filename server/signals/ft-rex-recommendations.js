@@ -21,6 +21,10 @@ module.exports = async (content, {locals: {slots, q2Length}}) => {
 			const options = articleIds.map(id => ({ _id: id, _source: TEASER_PROPS }));
 			const articles = await es.mget({ docs: options });
 
+			if (!articles || articles.length < q2Length) {
+				return null;
+			}
+
 			const response = {};
 			const model = {
 				title: 'ft rex recommendations', //TODO set proper title
