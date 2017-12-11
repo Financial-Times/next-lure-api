@@ -1,5 +1,12 @@
 const logger = require('@financial-times/n-logger').default;
-const { relatedContent, topStories, timeRelevantRecommendations, essentialStories, myFtRecommendations } = require('../signals');
+const {
+	relatedContent,
+	topStories,
+	timeRelevantRecommendations,
+	essentialStories,
+	myFtRecommendations,
+	ftRexRecommendations
+} = require('../signals');
 
 const modelIsFulfilled = (slots, model) => {
 	return !Object.keys(excludeCompletedSlots(slots, model)).length
@@ -27,6 +34,10 @@ module.exports = async (req, res, next) => {
 			signalStack.unshift(myFtRecommendations);
 		}
 
+		if (res.locals.flags.ftRexRecommendations) {
+			signalStack.unshift(ftRexRecommendations);
+		}
+
 		if (res.locals.flags.lureTopStories) {
 			signalStack.unshift(topStories);
 		}
@@ -42,6 +53,7 @@ module.exports = async (req, res, next) => {
 		) {
 			signalStack.unshift(essentialStories);
 		}
+
 
 		let signal;
 

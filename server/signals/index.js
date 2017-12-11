@@ -3,5 +3,6 @@ module.exports = {
 	topStories: require('./top-stories'),
 	timeRelevantRecommendations: require('./time-relevant-recommendations'),
 	essentialStories: require('./essential-stories'),
-	myFtRecommendations: require('./myft-recommendations')
+	myFtRecommendations: require('./myft-recommendations'),
+	ftRexRecommendations: require('./ft-rex-recommendations')
 };
