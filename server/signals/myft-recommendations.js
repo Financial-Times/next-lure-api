@@ -65,8 +65,11 @@ module.exports = async (content, {locals: {slots, userId, q2Length}}) => {
 				titleHref: `/myft/${userId}`
 			};
 
+			const items = articles.slice(0, q2Length);
+			items.forEach(item => item.originator = 'myft-recommendations');
+
 			response.onward = Object.assign({
-				items: articles.slice(0, q2Length)
+				items: items
 			}, model);
 
 			return response;

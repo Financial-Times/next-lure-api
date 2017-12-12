@@ -11,7 +11,7 @@ const subject = proxyquire('../../server/signals/myft-recommendations', {
 	'fetchres': stubs.fetchres,
 	'../lib/transform-myft-data': stubs.transformMyftData
 });
-const eightArticles = ['article1','article2','article3','article4','article5','article6','article7','article8'];
+let eightArticles;
 let params;
 
 
@@ -27,6 +27,7 @@ describe('myFT Recommendations', () => {
 				q2Length: 8
 			}
 		};
+		eightArticles = [{ id: '1'}, { id: '2'}, { id: '3'}, { id: '4'}, { id: '5'}, { id: '6'}, { id: '7'}, { id: '8'}];
 	});
 
 	it('should return null if userId has not passed', () => {
@@ -54,11 +55,13 @@ describe('myFT Recommendations', () => {
 	});
 
 	it('should return response with correct properties', () => {
+		const correctItems = [].concat(eightArticles);
+		correctItems.forEach(item => item.originator = 'myft-recommendations');
 		const correctResponse = {
 			onward: {
 				title: 'Your latest myFT stories',
 				titleHref: '/myft/00000000-0000-0000-0000-000000000000',
-				items: eightArticles
+				items: correctItems
 			}
 		};
 
@@ -69,13 +72,16 @@ describe('myFT Recommendations', () => {
 	});
 
 	it('should return correct number(= q2Length) of article data', () => {
-		const nineArticles = [...eightArticles].concat('article9');
+		const nineArticles = [{ id: '1'}, { id: '2'}, { id: '3'}, { id: '4'}, { id: '5'}, { id: '6'}, { id: '7'}, { id: '8'}, { id: '9'}];
 		stubs.transformMyftData.extractArticlesFromConcepts.returns(Promise.resolve({ followsConcepts: true, articles: nineArticles }));
+
+		const correctItems = [].concat(eightArticles);
+		correctItems.forEach(item => item.originator = 'myft-recommendations');
 		const correctResponse = {
 			onward: {
 				title: 'Your latest myFT stories',
 				titleHref: '/myft/00000000-0000-0000-0000-000000000000',
-				items: eightArticles
+				items: correctItems
 			}
 		};
 

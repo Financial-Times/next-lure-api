@@ -31,8 +31,11 @@ module.exports = async (content, {locals: {slots, q2Length}}) => {
 				titleHref: '/'
 			};
 
+			const items = articles.slice(0, q2Length);
+			items.forEach(item => item.originator = 'ft-rex-recommendations');
+
 			response.onward = Object.assign({
-				items: articles.slice(0, q2Length)
+				items: items
 			}, model);
 
 			return response;

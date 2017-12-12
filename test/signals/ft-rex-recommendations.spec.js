@@ -12,8 +12,8 @@ const subject = proxyquire('../../server/signals/ft-rex-recommendations', {
 });
 
 const TEASER_PROPS = require('@financial-times/n-teaser').esQuery;
-const eightArticleIds = ['id-1','id-2','id-3','id-4','id-5','id-6','id-7','id-8'];
-const eightArticles = ['article1', 'article2', 'article3', 'article4', 'article5', 'article6', 'article7', 'article8'];
+let eightArticleIds;
+let eightArticles;
 let params;
 
 describe('myFT Recommendations', () => {
@@ -27,6 +27,8 @@ describe('myFT Recommendations', () => {
 				q2Length: 8
 			}
 		};
+		eightArticleIds = ['id-1','id-2','id-3','id-4','id-5','id-6','id-7','id-8'];
+		eightArticles = [{ id: '1'}, { id: '2'}, { id: '3'}, { id: '4'}, { id: '5'}, { id: '6'}, { id: '7'}, { id: '8'}];
 	});
 
 	it('should return null if slots.onward is false', () => {
@@ -72,11 +74,13 @@ describe('myFT Recommendations', () => {
 	});
 
 	it('should return response with correct properties', () => {
+		const correctItems = [].concat(eightArticles);
+		correctItems.forEach(item => item.originator = 'ft-rex-recommendations');
 		const correctResponse = {
 			onward: {
 				title: 'ft rex recommendations',
 				titleHref: '/',
-				items: eightArticles
+				items: correctItems
 			}
 		};
 
@@ -87,13 +91,16 @@ describe('myFT Recommendations', () => {
 	});
 
 	it('should return correct number(= q2Length) of article data', () => {
-		const nineArticles = [...eightArticles].concat('article9');
+		const nineArticles = [{ id: '1'}, { id: '2'}, { id: '3'}, { id: '4'}, { id: '5'}, { id: '6'}, { id: '7'}, { id: '8'}, { id: '9'}];
 		stubs.es.mget.returns( Promise.resolve(nineArticles) );
+
+		const correctItems = [].concat(eightArticles);
+		correctItems.forEach(item => item.originator = 'ft-rex-recommendations');
 		const correctResponse = {
 			onward: {
 				title: 'ft rex recommendations',
 				titleHref: '/',
-				items: eightArticles
+				items: correctItems
 			}
 		};
 
