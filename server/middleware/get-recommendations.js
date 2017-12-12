@@ -34,7 +34,7 @@ module.exports = async (req, res, next) => {
 			signalStack.unshift(myFtRecommendations);
 		}
 
-		if (res.locals.flags.ftRexRecommendations) {
+		if (res.locals.flags.lureFtRexRecommendations) {
 			signalStack.unshift(ftRexRecommendations);
 		}
 
