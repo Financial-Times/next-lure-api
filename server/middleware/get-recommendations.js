@@ -5,6 +5,9 @@ const {
 	myFtRecommendations,
 	ftRexRecommendations
 } = require('../signals');
+const { RIBBON_COUNT, ONWARD_COUNT } = require('../constants');
+const slotsCount = { ribbon: RIBBON_COUNT, onward: ONWARD_COUNT };
+const dedupeById = require('../lib/dedupe-by-id');
 
 const modelIsFulfilled = (slots, model) => {
 	return !Object.keys(excludeCompletedSlots(slots, model)).length;
@@ -17,6 +20,24 @@ const excludeCompletedSlots = (slots, model) => {
 		}
 		return obj;
 	}, {});
+};
+
+const	padIncompletedSlots = (slots, paddingItems, model, isLastSignal) => {
+	Object.keys(slots).forEach((slotName) => {
+		if (isLastSignal && !model[slotName]) {
+			model[slotName] = paddingItems[slotName];
+		} else {
+			const shortOfItems = model[slotName] ? slotsCount[slotName] - model[slotName].items.length : false;
+			if (shortOfItems) {
+				if (model[slotName].items.length < slotsCount[slotName]/2) {
+					model[slotName].title = paddingItems[slotName].title;
+					model[slotName].titleHref = paddingItems[slotName].title;
+					model[slotName].concept = paddingItems[slotName].concept;
+				}
+				model[slotName].items = dedupeById(model[slotName].items, paddingItems[slotName].items).slice(0, slotsCount[slotName]);
+			}
+		}
+	});
 };
 
 module.exports = async (req, res, next) => {
@@ -44,15 +65,16 @@ module.exports = async (req, res, next) => {
 			signalStack.push(myFtRecommendations);
 		}
 
-		signalStack.push(relatedContent);
+		const paddingItems = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
 
 		let signal;
 
 		while ((signal = signalStack.shift()) && !modelIsFulfilled(res.locals.slots, recommendations)) {
-
 			const newRecommendations = await signal(res.locals.content, { locals: Object.assign({}, res.locals, {
 				slots: excludeCompletedSlots(res.locals.slots, recommendations)
 			}), query: req.query});
+			const isLastSignal = signalStack.length ? true : false;
+			padIncompletedSlots(res.locals.slots, paddingItems, newRecommendations, isLastSignal);
 			recommendations = Object.assign(recommendations, newRecommendations);
 		}
 
