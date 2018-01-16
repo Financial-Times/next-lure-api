@@ -22,9 +22,9 @@ const excludeCompletedSlots = (slots, model) => {
 	}, {});
 };
 
-const	padIncompletedSlots = (slots, paddingItems, model, isLastSignal) => {
+const	padIncompletedSlots = (slots, model, paddingItems) => {
 	Object.keys(slots).forEach((slotName) => {
-		if (isLastSignal && !model[slotName]) {
+		if (!model[slotName]) {
 			model[slotName] = paddingItems[slotName];
 		} else {
 			const isShortOfItems = model[slotName] && (model[slotName].items.length < slotsCount[slotName]) ? true : false;
@@ -65,17 +65,24 @@ module.exports = async (req, res, next) => {
 			signalStack.push(myFtRecommendations);
 		}
 
-		const paddingItems = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
-
 		let signal;
 
 		while ((signal = signalStack.shift()) && !modelIsFulfilled(res.locals.slots, recommendations)) {
 			const newRecommendations = await signal(res.locals.content, { locals: Object.assign({}, res.locals, {
 				slots: excludeCompletedSlots(res.locals.slots, recommendations)
 			}), query: req.query});
-			const isLastSignal = signalStack.length ? true : false;
-			padIncompletedSlots(res.locals.slots, paddingItems, newRecommendations, isLastSignal);
 			recommendations = Object.assign(recommendations, newRecommendations);
+		}
+
+		const needPadding = Object.keys(res.locals.slots).map(slotName => {
+			const isSlotNotExist = !recommendations[slotName] ? true : false;
+			const isShortOfItems = !isSlotNotExist && recommendations[slotName].items.length < slotsCount[slotName] ? true : false;
+			return isSlotNotExist || isShortOfItems;
+		}).includes(true);
+
+		if (needPadding) {
+			const paddingItems = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
+			padIncompletedSlots(res.locals.slots, recommendations, paddingItems);
 		}
 
 		res.locals.recommendations = recommendations;

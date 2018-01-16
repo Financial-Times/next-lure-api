@@ -66,14 +66,14 @@ describe('get recommendations', () => {
 			expect(signalStubs.essentialStories.calledOnce).to.be.true;
 		});
 
-		it('move next signal to get data for onward slot', async () => {
+		it.only('move next signal to get data for onward slot', async () => {
 			const mocks = getMockArgs(sandbox);
 			mocks[1].locals.flags.cleanOnwardJourney = true;
 			mocks[1].locals.flags.refererCohort = 'search';
 			mocks[1].locals.content._editorialComponents = ['editorial component'];
 			mocks[1].locals.slots= { ribbon: true, onward: true };
-			signalStubs.essentialStories.returns(Promise.resolve({ ribbon: 'from Essential Stories' }));
-			signalStubs.relatedContent.returns(Promise.resolve({ onward: 'from Related Content' }));
+			signalStubs.essentialStories.returns(Promise.resolve({ ribbon: { items : [1,2,3,4] } }));
+			signalStubs.relatedContent.returns(Promise.resolve({ ribbon: { items : [1,2,3,4] }, onward: { items : [5,6,7,8,9,10,11] } }));
 			await middleware(...mocks);
 			expect(mocks[1].locals.recommendations).to.eql({ ribbon: 'from Essential Stories', onward: 'from Related Content' });
 			expect(signalStubs.essentialStories.calledOnce).to.be.true;
