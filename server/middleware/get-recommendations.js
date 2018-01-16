@@ -31,7 +31,7 @@ const	padIncompletedSlots = (slots, paddingItems, model, isLastSignal) => {
 			if (shortOfItems) {
 				if (model[slotName].items.length < slotsCount[slotName]/2) {
 					model[slotName].title = paddingItems[slotName].title;
-					model[slotName].titleHref = paddingItems[slotName].title;
+					model[slotName].titleHref = paddingItems[slotName].titleHref;
 					model[slotName].concept = paddingItems[slotName].concept;
 				}
 				model[slotName].items = dedupeById(model[slotName].items, paddingItems[slotName].items).slice(0, slotsCount[slotName]);

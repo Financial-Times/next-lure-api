@@ -33,7 +33,7 @@
     "n-health": "^2.1.0"
   },
   "devDependencies": {
-    "@financial-times/n-gage": "^1.17.2",
+    "@financial-times/n-gage": "^1.19.3",
     "@financial-times/n-heroku-tools": "^6.30.0",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
