@@ -27,8 +27,8 @@ const	padIncompletedSlots = (slots, paddingItems, model, isLastSignal) => {
 		if (isLastSignal && !model[slotName]) {
 			model[slotName] = paddingItems[slotName];
 		} else {
-			const shortOfItems = model[slotName] ? slotsCount[slotName] - model[slotName].items.length : false;
-			if (shortOfItems) {
+			const isShortOfItems = model[slotName] && (model[slotName].items.length < slotsCount[slotName]) ? true : false;
+			if (isShortOfItems) {
 				if (model[slotName].items.length < slotsCount[slotName]/2) {
 					model[slotName].title = paddingItems[slotName].title;
 					model[slotName].titleHref = paddingItems[slotName].titleHref;
