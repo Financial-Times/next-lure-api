@@ -34,7 +34,8 @@ const	padIncompletedSlots = (slots, model, paddingItems) => {
 					model[slotName].titleHref = paddingItems[slotName].titleHref;
 					model[slotName].concept = paddingItems[slotName].concept;
 				}
-				model[slotName].items = dedupeById(model[slotName].items, paddingItems[slotName].items).slice(0, slotsCount[slotName]);
+				const combinedItems = model[slotName].items.concat(paddingItems[slotName].items);
+				model[slotName].items = dedupeById(combinedItems).slice(0, slotsCount[slotName]);
 			}
 		}
 	});
