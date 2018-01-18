@@ -125,13 +125,20 @@ describe('get recommendations', () => {
 	});
 
 	context('Incomplete slot', () => {
+
+		let mocks;
+
 		context('[ ribbon ]', () => {
-			it('should be padded items from Related Content when a slot is short of items', async () => {
-				const mocks = getMockArgs(sandbox);
+
+			beforeEach(() => {
+				mocks = getMockArgs(sandbox);
 				mocks[1].locals.flags.cleanOnwardJourney = true;
 				mocks[1].locals.flags.refererCohort = 'search';
 				mocks[1].locals.content._editorialComponents = ['editorial component'];
 				mocks[1].locals.slots = { ribbon: true, onward: true };
+			});
+
+			it('should be padded items from Related Content when a slot is short of items', async () => {
 				responseFromEssentialStories.ribbon.items = responseFromEssentialStories.ribbon.items.slice(0,2);
 				const correctRibbonItems = Object.assign({}, responseFromEssentialStories.ribbon, { items: [{id:'es-1'},{id:'es-2'},{id:'rc-1'},{id:'rc-2'}] });
 				const correctOnwardItems = Object.assign({}, responseFromRelatedContent.onward);
@@ -144,11 +151,6 @@ describe('get recommendations', () => {
 			});
 
 			it('should be set title/titleHref/concept from Related Content when recommendation items is less than the half of the slot', async () => {
-				const mocks = getMockArgs(sandbox);
-				mocks[1].locals.flags.cleanOnwardJourney = true;
-				mocks[1].locals.flags.refererCohort = 'search';
-				mocks[1].locals.content._editorialComponents = ['editorial component'];
-				mocks[1].locals.slots = { ribbon: true };
 				responseFromEssentialStories.ribbon.items = responseFromEssentialStories.ribbon.items.slice(0,1);
 				signalStubs.essentialStories.returns(Promise.resolve(responseFromEssentialStories));
 				signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));
@@ -162,12 +164,15 @@ describe('get recommendations', () => {
 		// TODO rewrite these tests with a signal which is not experimental one
 		// ftRexRecommendations is an experimental signal at the moment
 		context('[ onward ]', () => {
-			it('should be padded items from Related Content when a slot is short of items', async () => {
-				const mocks = getMockArgs(sandbox);
+
+			let responseFromFtRexRecommendations;
+
+			beforeEach(() => {
+				mocks = getMockArgs(sandbox);
 				mocks[1].locals.flags.cleanOnwardJourney = true;
 				mocks[1].locals.flags.lureFtRexRecommendations = true;
 				mocks[1].locals.slots = { onward: true };
-				const responseFromFtRexRecommendations = {
+				responseFromFtRexRecommendations = {
 					onward: {
 						title: 'From FT Rex Recommendations',
 						titleHref: '/ft-rex-recommendations',
@@ -175,6 +180,9 @@ describe('get recommendations', () => {
 						items: [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'},{id:'rex-8'}]
 					}
 				}
+			});
+
+			it('should be padded items from Related Content when a slot is short of items', async () => {
 				const correctOnwardItems = Object.assign({}, responseFromFtRexRecommendations.onward, {
 					items: [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'},{id:'rex-8'},{id:'rc-5'},{id:'rc-6'},{id:'rc-7'}]
 				});
@@ -187,18 +195,7 @@ describe('get recommendations', () => {
 			});
 
 			it('should be set title/titleHref/concept from Related Content when recommendation items is less than the half of the slot', async () => {
-				const mocks = getMockArgs(sandbox);
-				mocks[1].locals.flags.cleanOnwardJourney = true;
-				mocks[1].locals.flags.lureFtRexRecommendations = true;
-				mocks[1].locals.slots = { onward: true };
-				const responseFromFtRexRecommendations = {
-					onward: {
-						title: 'From FT Rex Recommendations',
-						titleHref: '/ft-rex-recommendations',
-						concept: 'concept from FT Rex Recommendations',
-						items: [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'}]
-					}
-				}
+				responseFromFtRexRecommendations.onward.items = [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'}];
 				signalStubs.ftRexRecommendations.returns(Promise.resolve(responseFromFtRexRecommendations));
 				signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));
 				await middleware(...mocks);
