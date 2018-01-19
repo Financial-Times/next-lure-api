@@ -174,7 +174,7 @@ describe('get recommendations', () => {
 						concept: 'concept from FT Rex Recommendations',
 						items: [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'},{id:'rex-8'}]
 					}
-				}
+				};
 			});
 
 			it('should be padded items from Related Content when a slot is short of items', async () => {
