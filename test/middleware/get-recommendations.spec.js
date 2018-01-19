@@ -83,9 +83,8 @@ describe('get recommendations', () => {
 
 	context('essential stories', () => {
 
-		it('use essential stories when cleanOnwardJourney flag is on, refererCohort flag is search, and content._editorialComponents is defined', async () => {
+		it('use essential stories when refererCohort flag is search, and content._editorialComponents is defined', async () => {
 			const mocks = getMockArgs(sandbox);
-			mocks[1].locals.flags.cleanOnwardJourney = true;
 			mocks[1].locals.flags.refererCohort = 'search';
 			mocks[1].locals.content._editorialComponents = ['editorial component'];
 			await middleware(...mocks);
@@ -94,7 +93,6 @@ describe('get recommendations', () => {
 
 		it('move next signal to get data for onward slot', async () => {
 			const mocks = getMockArgs(sandbox);
-			mocks[1].locals.flags.cleanOnwardJourney = true;
 			mocks[1].locals.flags.refererCohort = 'search';
 			mocks[1].locals.content._editorialComponents = ['editorial component'];
 			mocks[1].locals.slots = { ribbon: true, onward: true };
@@ -110,7 +108,6 @@ describe('get recommendations', () => {
 
 		it('fallback to next signal when no essentialStories results', async () => {
 			const mocks = getMockArgs(sandbox);
-			mocks[1].locals.flags.cleanOnwardJourney = true;
 			mocks[1].locals.flags.refererCohort = 'search';
 			mocks[1].locals.content._editorialComponents = ['editorial component'];
 			mocks[1].locals.slots = { ribbon: true, onward: true };
@@ -132,7 +129,6 @@ describe('get recommendations', () => {
 
 			beforeEach(() => {
 				mocks = getMockArgs(sandbox);
-				mocks[1].locals.flags.cleanOnwardJourney = true;
 				mocks[1].locals.flags.refererCohort = 'search';
 				mocks[1].locals.content._editorialComponents = ['editorial component'];
 				mocks[1].locals.slots = { ribbon: true, onward: true };
@@ -169,7 +165,6 @@ describe('get recommendations', () => {
 
 			beforeEach(() => {
 				mocks = getMockArgs(sandbox);
-				mocks[1].locals.flags.cleanOnwardJourney = true;
 				mocks[1].locals.flags.lureFtRexRecommendations = true;
 				mocks[1].locals.slots = { onward: true };
 				responseFromFtRexRecommendations = {

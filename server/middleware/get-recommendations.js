@@ -48,7 +48,6 @@ module.exports = async (req, res, next) => {
 		const signalStack = [];
 
 		if (res.locals.flags.refererCohort === 'search'
-			&& res.locals.flags.cleanOnwardJourney
 			&& res.locals.content._editorialComponents
 			&& res.locals.content._editorialComponents.length > 0
 		) {
