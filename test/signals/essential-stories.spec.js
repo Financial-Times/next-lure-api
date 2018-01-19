@@ -21,12 +21,6 @@ describe('essential-stories signal', () => {
 		expect(result).to.eql(null);
 	});
 
-	it('should return null when there is not enough stories', () => {
-		content = { _editorialComponents: [{ stories: [ 'story1', 'story2'] }] };
-		const result = subject(content, params);
-		expect(result).to.eql(null);
-	});
-
 	it('should set correct properties in response', () => {
 		const result = subject(content, params);
 		expect(result).to.have.property('ribbon');
