@@ -2,7 +2,6 @@ const logger = require('@financial-times/n-logger').default;
 const {
 	relatedContent,
 	essentialStories,
-	myFtRecommendations,
 	ftRexRecommendations
 } = require('../signals');
 const { RIBBON_COUNT, ONWARD_COUNT } = require('../constants');
@@ -56,13 +55,6 @@ module.exports = async (req, res, next) => {
 
 		if (res.locals.flags.lureFtRexRecommendations) {
 			signalStack.push(ftRexRecommendations);
-		}
-
-		//TODO place correctly following the recommendations' priority
-		if (res.locals.flags.myFtApi
-			&& res.locals.flags.lureMyFtRecommendations
-		) {
-			signalStack.push(myFtRecommendations);
 		}
 
 		let signal;
