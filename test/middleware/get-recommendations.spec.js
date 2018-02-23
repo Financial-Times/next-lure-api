@@ -179,7 +179,7 @@ describe('get recommendations', () => {
 
 			it('should be padded items from Related Content when a slot is short of items', async () => {
 				const correctOnwardItems = Object.assign({}, responseFromFtRexRecommendations.onward, {
-					items: [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'},{id:'rex-8'},{id:'rc-5'},{id:'rc-6'},{id:'rc-7'}]
+					items: [{id:'rex-5'},{id:'rex-6'},{id:'rex-7'},{id:'rex-8'},{id:'rc-5'},{id:'rc-6'},{id:'rc-7'},{id:'rc-8'}]
 				});
 				signalStubs.ftRexRecommendations.returns(Promise.resolve(responseFromFtRexRecommendations));
 				signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));

@@ -93,7 +93,7 @@ describe('related-content signal', () => {
 				}]
 			}, {locals: {slots: {onward: true}}})
 				.then(() => {
-					expect(es.search.args[0][0].size).to.equal(8);
+					expect(es.search.args[0][0].size).to.equal(9);
 				});
 		});
 
