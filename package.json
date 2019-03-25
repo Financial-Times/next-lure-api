@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Financial-Times/next-lure-api#readme",
   "dependencies": {
-    "@financial-times/n-concept-ids": "1.2.0",
+    "@financial-times/n-concept-ids": "1.3.0",
     "@financial-times/n-es-client": "1.6.2",
     "@financial-times/n-express": "19.21.1",
     "@financial-times/n-logger": "5.7.2",
