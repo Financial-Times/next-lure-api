@@ -133,6 +133,7 @@ jobs:
       - run:
           name: shared-helper / helper-install-puppeteer-deps
           command: bash .circleci/shared-helpers/helper-install-puppeteer-deps
+      - run: npx snyk monitor --org=customer-products --project-name=Financial-Times/next-lure-api
       - run:
           name: Deploy to production
           command: make deploy
