@@ -28,7 +28,7 @@
     "@financial-times/n-es-client": "1.7.0",
     "@financial-times/n-express": "19.21.4",
     "@financial-times/n-logger": "6.1.0",
-    "@financial-times/n-teaser": "4.15.1",
+    "@financial-times/n-teaser": "5.1.0",
     "cookie-parser": "^1.4.3",
     "fetchres": "1.7.2",
     "ft-poller": "^3.0.1",
