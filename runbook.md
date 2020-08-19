@@ -8,7 +8,7 @@ https://www.ft.com/lure
 customer-products-content-discovery
 
 ## Supported By
-customer-products-content-discovery
+customer-products-ops-cops
 
 ## Service Tier
 Bronze
