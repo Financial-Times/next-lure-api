@@ -32,7 +32,7 @@
     "cookie-parser": "^1.4.3",
     "fetchres": "1.7.2",
     "ft-poller": "^3.0.1",
-    "n-health": "3.3.1"
+    "n-health": "4.0.0"
   },
   "devDependencies": {
     "@financial-times/n-gage": "^3.12.0",
