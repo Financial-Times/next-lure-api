@@ -1,6 +1,6 @@
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getRelatedContent = require('../lib/get-related-content');
-const {RIBBON_COUNT, ONWARD_COUNT} = require('../constants');
+const {RIBBON_COUNT, ONWARD_COUNT, ALTERNATE_ONWARD_COUNT} = require('../constants');
 
 module.exports = async (content, {locals: {slots}}) => {
 	const concepts = getMostRelatedConcepts(content);
@@ -27,6 +27,13 @@ module.exports = async (content, {locals: {slots}}) => {
 		response.onward = {
 			concept: related.concept,
 			items: related.items.slice(0, ONWARD_COUNT)
+		};
+	}
+
+	if (slots.alternateOnward) {
+		response.alternateOnward = {
+			concept: related.concept,
+			items: related.items.slice(0, ALTERNATE_ONWARD_COUNT)
 		};
 	}
 

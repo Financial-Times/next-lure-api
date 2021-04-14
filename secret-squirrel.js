@@ -13,7 +13,7 @@ module.exports = {
 			'b0d8e4fe-10ff-11e5-8413-00144feabdc0', // intlTopStories list id
 			'658368f2-b41e-11e7-82e7-100554b68858', // README.md:3 - image of fishing fly
 			'9b40e89c-e87b-3d4f-b72c-2cf7511d2146', // news genre id
-			'601193e7-fe09-4234-96a7-c9816a6248ea', // runbook.md
+			'601193e7-fe09-4234-96a7-c9816a6248ea', // runbook.md:88
 		]
 	}
 };

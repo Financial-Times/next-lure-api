@@ -1,8 +1,8 @@
 const logger = require('@financial-times/n-logger').default;
 
 const relatedContent = require('../signals/related-content');
-const { RIBBON_COUNT, ONWARD_COUNT } = require('../constants');
-const slotsCount = { ribbon: RIBBON_COUNT, onward: ONWARD_COUNT };
+const { RIBBON_COUNT, ONWARD_COUNT, ALTERNATE_ONWARD_COUNT } = require('../constants');
+const slotsCount = { ribbon: RIBBON_COUNT, onward: ONWARD_COUNT, alternateOnward: ALTERNATE_ONWARD_COUNT };
 const dedupeById = require('../lib/dedupe-by-id');
 
 const	padIncompletedSlots = (slots, model, paddingItems) => {

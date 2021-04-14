@@ -57,17 +57,27 @@ describe('lure e2e', () => {
 					items: getItems(5),
 					concept: {
 						prefLabel: 'Stuff',
-						preposition: 'apropos',
-						relativeUrl: '/adskjasdk'
+						preposition: 'examplePrepos',
+						relativeUrl: '/exampleLink'
 					}
-				}
+				},
+				alternateOnward: {
+					items: getItems(5),
+					concept: {
+						prefLabel: 'Stuff',
+						preposition: 'examplePrepos',
+						relativeUrl: '/exampleLink'
+					}
+				},
 			};
 
 			return request(app)
 				.get('/lure/v2/content/uuid')
 				.then(({body}) => {
-					expect(body.ribbon.title).to.equal('Latest apropos Stuff');
-					expect(body.ribbon.titleHref).to.equal('/adskjasdk');
+					expect(body.ribbon.title).to.equal('Latest examplePrepos Stuff');
+					expect(body.ribbon.titleHref).to.equal('/exampleLink');
+					expect(body.alternateOnward.title).to.equal('More examplePrepos Stuff');
+					expect(body.alternateOnward.titleHref).to.equal('/exampleLink');
 				});
 		});
 
