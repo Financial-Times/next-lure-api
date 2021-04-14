@@ -92,4 +92,31 @@ describe('related-content signal', () => {
 				});
 		});
 	});
+
+	context('brandOnwards slot', () => {
+		it('doesn\`t return brandOnward slot if no brand concept available', () => {
+			return subject({
+				id: 'parent-id',
+				curatedRelatedContent: [],
+			}, { locals: { slots: { brandOnward: true }}})
+				.then(result => {
+					expect(result).to.not.include.keys('brandOnward');
+				});
+		});
+
+		it('returns correct number of stories in slot', () => {
+			results.items = [ { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 } ];
+
+			return subject({
+				id: 'parent-id',
+				annotations: [{
+					directType: 'http://www.ft.com/ontology/product/Brand',
+					id: 0
+				}]
+			}, { locals: { slots: { brandOnward: true }}})
+				.then(result => {
+					expect(result.brandOnward.items.map(obj => obj.id)).to.eql([ 1, 2, 3, 4, ]);
+				});
+		});
+	});
 });

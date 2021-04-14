@@ -7,7 +7,7 @@ module.exports = async (content, {locals: {slots}}) => {
 	const mostRelatedConcepts = getMostRelatedConcepts(content);
 	const brandConcept = getBrandConcept(content);
 
-	if (!mostRelatedConcepts || !brandConcept) {
+	if (!mostRelatedConcepts) {
 		return {};
 	}
 
@@ -33,7 +33,7 @@ module.exports = async (content, {locals: {slots}}) => {
 		};
 	}
 
-	if (slots.brandOnward) {
+	if (slots.brandOnward && !!brandConcept) {
 		response.brandOnward = {
 			concept: brandRelated.concept,
 			items: brandRelated.items.slice(0, BRAND_ONWARD_COUNT)
