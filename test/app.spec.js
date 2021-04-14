@@ -61,7 +61,7 @@ describe('lure e2e', () => {
 						relativeUrl: '/exampleLink'
 					}
 				},
-				alternateOnward: {
+				brandOnward: {
 					items: getItems(5),
 					concept: {
 						prefLabel: 'Stuff',
@@ -76,8 +76,8 @@ describe('lure e2e', () => {
 				.then(({body}) => {
 					expect(body.ribbon.title).to.equal('Latest examplePrepos Stuff');
 					expect(body.ribbon.titleHref).to.equal('/exampleLink');
-					expect(body.alternateOnward.title).to.equal('More examplePrepos Stuff');
-					expect(body.alternateOnward.titleHref).to.equal('/exampleLink');
+					expect(body.brandOnward.title).to.equal('More examplePrepos Stuff');
+					expect(body.brandOnward.titleHref).to.equal('/exampleLink');
 				});
 		});
 

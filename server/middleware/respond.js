@@ -34,8 +34,8 @@ module.exports = (_, res) => {
 		response.onward = finishModel(recommendations.onward, 'Latest');
 	}
 
-	if (recommendations.alternateOnward) {
-		response.alternateOnward = finishModel(recommendations.alternateOnward, 'More');
+	if (recommendations.brandOnward) {
+		response.brandOnward = finishModel(recommendations.brandOnward, 'More');
 	}
 
 	res.set('Cache-Control', res.FT_NO_CACHE);
