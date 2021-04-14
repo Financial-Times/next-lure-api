@@ -1,15 +1,18 @@
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
+const getBrandRelatedConcepts = require('../lib/get-brand-related-concepts');
 const getRelatedContent = require('../lib/get-related-content');
 const {RIBBON_COUNT, ONWARD_COUNT, ALTERNATE_ONWARD_COUNT} = require('../constants');
 
 module.exports = async (content, {locals: {slots}}) => {
-	const concepts = getMostRelatedConcepts(content);
+	const mostRelatedConcepts = getMostRelatedConcepts(content);
+	const brandRelatedConcepts = getBrandRelatedConcepts(content);
 
-	if (!concepts) {
+	if (!mostRelatedConcepts || !brandRelatedConcepts) {
 		return {};
 	}
 
-	const related = await getRelatedContent(concepts[0], ONWARD_COUNT, content.id, null);
+	const related = await getRelatedContent(mostRelatedConcepts[0], ONWARD_COUNT, content.id, null);
+	const brandRelated = await getRelatedContent(brandRelatedConcepts[0], ALTERNATE_ONWARD_COUNT, content.id, null);
 
 	const response = {};
 
@@ -32,8 +35,8 @@ module.exports = async (content, {locals: {slots}}) => {
 
 	if (slots.alternateOnward) {
 		response.alternateOnward = {
-			concept: related.concept,
-			items: related.items.slice(0, ALTERNATE_ONWARD_COUNT)
+			concept: brandRelated.concept,
+			items: brandRelated.items.slice(0, ALTERNATE_ONWARD_COUNT)
 		};
 	}
 
