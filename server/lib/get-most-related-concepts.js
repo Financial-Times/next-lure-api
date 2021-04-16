@@ -8,14 +8,14 @@ module.exports = content => {
 	const mostRelatedConcepts = [
 		displayTag,
 		content.annotations.find(annotation => annotation.predicate === 'http://www.ft.com/ontology/annotation/about'),
-		content.annotations.find(annotation => annotation.predicate === 'http://www.ft.com/ontology/classification/isPrimarilyClassifiedBy')
+		content.annotations.find(annotation => annotation.predicate === 'http://www.ft.com/ontology/classification/isPrimarilyClassifiedBy'),
+		content.annotations.find(annotation => annotation.predicate === 'http://www.ft.com/ontology/implicitlyAbout'),
+		content.annotations.find(
+			annotation => annotation.predicate === 'http://www.ft.com/ontology/classification/isClassifiedBy'
+			&& annotation.directType === 'http://www.ft.com/ontology/product/Brand'
+		)
 	]
 		.filter(concept => !!concept);
 
-	if (mostRelatedConcepts.length < 2) {
-		if(content.brandConcept && !mostRelatedConcepts.find(concept => concept.id === content.brandConcept.id)) {
-			mostRelatedConcepts.push(content.brandConcept);
-		}
-	}
 	return mostRelatedConcepts.length ? mostRelatedConcepts : undefined;
 };
