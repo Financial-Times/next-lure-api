@@ -1,4 +1,6 @@
 const logger = require('@financial-times/n-logger').default;
+const { metrics } = require('@financial-times/n-express');
+
 const {
 	relatedContent,
 	essentialStories
@@ -50,6 +52,7 @@ module.exports = async (req, res, next) => {
 			&& res.locals.content._editorialComponents.length > 0
 		) {
 			signalStack.push(essentialStories);
+			metrics.count('signals.essentialStories');
 		}
 
 		let signal;
@@ -66,6 +69,8 @@ module.exports = async (req, res, next) => {
 			const isShortOfItems = !isSlotNotExist && recommendations[slotName].items.length < slotsCount[slotName] ? true : false;
 			return isSlotNotExist || isShortOfItems;
 		}).includes(true);
+
+		metrics.count(`signals.needPadding.${needPadding}`);
 
 		if (needPadding) {
 			const paddingItems = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
