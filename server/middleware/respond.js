@@ -1,3 +1,4 @@
+const { metrics } = require('@financial-times/n-express');
 const send404 = require('../lib/send-404');
 
 const finishModel = (model) => {
@@ -40,4 +41,7 @@ module.exports = (req, res) => {
 	}
 
 	res.json(response);
+
+	metrics.count(`slots.ribbon.${Boolean(response.ribbon)}`);
+	metrics.count(`slots.onward.${Boolean(response.onward)}`);
 };
