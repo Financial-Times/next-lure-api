@@ -3,7 +3,7 @@ const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
 const {RIBBON_COUNT, ONWARD_COUNT, BRAND_ONWARD_COUNT} = require('../constants');
 
-module.exports = async (content, {locals: {slots}}) => {
+module.exports = async (content, {locals: {flags, slots}}) => {
 	const mostRelatedConcepts = getMostRelatedConcepts(content);
 	const brandConcept = getBrandConcept(content);
 
@@ -14,15 +14,18 @@ module.exports = async (content, {locals: {slots}}) => {
 	const related = await getRelatedContent(mostRelatedConcepts[0], ONWARD_COUNT, content.id, null);
 	const brandRelated = await getRelatedContent(brandConcept, BRAND_ONWARD_COUNT, content.id, null);
 
+	const brandRibbon = (flags.lureBrandOnwardSlot && flags.lureBrandOnwardSlot === 'brandRibbon');
+
 	const response = {};
 
 	if (!related.items.length) {
 		return response;
 	}
+
 	if (slots.ribbon) {
 		response.ribbon = {
-			concept: related.concept,
-			items: related.items.slice(0, RIBBON_COUNT)
+			concept: brandRibbon ? brandRelated.concept : related.concept,
+			items: brandRibbon ? brandRelated.items.slice(0, RIBBON_COUNT) : related.items.slice(0, RIBBON_COUNT)
 		};
 	}
 

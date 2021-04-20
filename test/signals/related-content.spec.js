@@ -93,7 +93,7 @@ describe('related-content signal', () => {
 		});
 	});
 
-	context('brandOnwards slot', () => {
+	context('brandOnward slot', () => {
 		it('doesn\`t return brandOnward slot if no brand concept available', () => {
 			return subject({
 				id: 'parent-id',
