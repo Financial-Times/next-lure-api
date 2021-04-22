@@ -27,12 +27,6 @@ describe('lure e2e', () => {
 		middleware.getRecommendations.restore();
 	});
 
-	it('vary on flags and ft-edition header', () => {
-		return request(app)
-			.get('/lure/v2/content/uuid')
-			.expect('Vary', 'ft-flags, ft-edition');
-	});
-
 	it('404 for no recommendations', async () => {
 		return request(app)
 			.get('/lure/v2/content/uuid')

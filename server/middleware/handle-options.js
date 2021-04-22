@@ -7,14 +7,12 @@ module.exports = (req, res, next) => {
 			return map;
 		}, {}) : {'ribbon': true, 'onward': true};
 
-	res.locals.edition = ['uk', 'international'].includes(req.get('ft-edition')) ? req.get('ft-edition') : undefined;
 	res.locals.userId = req.query.userId;
 	res.locals.secureSessionToken = req.get('FT-Session-s-Token') || req.cookies.FTSession_s;
 
 	next();
 
 	try {
-		metrics.count(`params.edition.${res.locals.edition}`);
 		Boolean(res.locals.userId) && metrics.count('params.userId');
 		Boolean(res.locals.secureSessionToken) && metrics.count('params.secureSessionToken');
 	} catch (error) {

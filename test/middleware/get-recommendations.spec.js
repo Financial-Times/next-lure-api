@@ -16,7 +16,6 @@ const getMockArgs = (sandbox, headers = {}) => {
 		locals: {
 			flags: {},
 			slots: { ribbon: true },
-			edition: 'uk',
 			content: {
 				id: 'content-id'
 			}

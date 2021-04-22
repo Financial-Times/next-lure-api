@@ -8,7 +8,6 @@ module.exports = [{
 	},
 	headers: {
 		'ft-flags': 'lureTopStories',
-		'ft-edition': 'international'
 	}
 },{
 	urls: {
@@ -18,6 +17,5 @@ module.exports = [{
 	},
 	headers: {
 		'ft-flags': 'lureTimeRelevantRecommendations',
-		'ft-edition': 'international'
 	}
 }];
