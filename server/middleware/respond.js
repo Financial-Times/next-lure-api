@@ -3,9 +3,7 @@ const send404 = require('../lib/send-404');
 
 const finishModel = (model) => {
 	const listObj = {};
-
-	listObj.items = model.items.slice();
-
+	listObj.items = model.items ? model.items.slice() : [];
 	if (!model.concept) {
 		return Object.assign({}, {
 			title: model.title,
