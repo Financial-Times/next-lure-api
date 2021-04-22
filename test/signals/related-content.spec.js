@@ -73,19 +73,6 @@ describe('related-content signal', () => {
 				});
 		});
 
-		it('requests teasers in x-format if specified', () => {
-			return subject({
-				id: 'parent-id',
-				curatedRelatedContent: [],
-				annotations: [{
-					predicate: 'http://www.ft.com/ontology/annotation/about',
-					id: 0
-				}]
-			}, {locals: {slots: {onward: true}, teaserFormat: 'x'}})
-				.then(() => {
-					expect(stubs.getRelatedContent.args[0][4]).to.eql('x');
-				});
-		});
 	});
 
 	context('ribbon slot', () => {

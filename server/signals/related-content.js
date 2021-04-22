@@ -2,14 +2,14 @@ const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getRelatedContent = require('../lib/get-related-content');
 const {RIBBON_COUNT, ONWARD_COUNT} = require('../constants');
 
-module.exports = async (content, {locals: {slots, teaserFormat}}) => {
+module.exports = async (content, {locals: {slots}}) => {
 	const concepts = getMostRelatedConcepts(content);
 
 	if (!concepts) {
 		return {};
 	}
 
-	const related = await getRelatedContent(concepts[0], ONWARD_COUNT, content.id, null, teaserFormat);
+	const related = await getRelatedContent(concepts[0], ONWARD_COUNT, content.id, null);
 
 	const response = {};
 

@@ -1,6 +1,5 @@
 const es = require('@financial-times/n-es-client');
 const logger = require('@financial-times/n-logger').default;
-const TEASER_PROPS = require('@financial-times/n-teaser').esQuery;
 const { NEWS_CONCEPT_ID } = require('../constants');
 
 const getTrackablePredicate = concept => {
@@ -8,9 +7,8 @@ const getTrackablePredicate = concept => {
 	return ['about', 'isPrimarilyClassifiedBy'].includes(predicate) ? predicate : 'brand';
 };
 
-module.exports = (concept, count, parentContentId, news, teaserFormat = 'n') => {
+module.exports = (concept, count, parentContentId, news) => {
 
-	const teaserProps = teaserFormat === 'x' ? ['id', 'teaser.*'] : TEASER_PROPS;
 	let query;
 
 	if (typeof news === 'boolean') {
@@ -42,7 +40,7 @@ module.exports = (concept, count, parentContentId, news, teaserFormat = 'n') => 
 	}
 
 	return es.search({
-		_source: teaserProps,
+		_source: ['id', 'teaser.*'],
 		query,
 		size: count + 1
 	}, 500)
