@@ -1,7 +1,9 @@
 const express = require('@financial-times/n-express');
 const cookieParser = require('cookie-parser');
-
+require('express-async-errors');
 const healthchecks = require('./healthchecks');
+const errorHandler = require('./middleware/error-handler');
+const logger = require('@financial-times/n-logger').default;
 
 const app = express({
 	systemCode: 'next-lure-api',
@@ -26,9 +28,17 @@ const middlewareStack = [
 ];
 
 v2.get('/content/:contentId', middlewareStack);
+v2.use(errorHandler);
 
 lure.use('/v2', v2);
 app.use('/lure', lure);
+
+app.use(function logError (error, req, res, next) { // eslint-disable-line no-unused-vars
+	const status = error.statusCode || error.status;
+	if (status !== 404) {
+		logger.error(error);
+	}
+});
 
 if (process.env.NODE_ENV !== 'test') {
 	healthchecks.init();

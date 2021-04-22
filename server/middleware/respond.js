@@ -1,5 +1,5 @@
 const { metrics } = require('@financial-times/n-express');
-const send404 = require('../lib/send-404');
+const createError = require('http-errors');
 
 const finishModel = (model) => {
 	const listObj = {};
@@ -18,9 +18,9 @@ const finishModel = (model) => {
 	}, listObj);
 };
 
-module.exports = (req, res) => {
+module.exports = (_, res) => {
 	if (!res.locals.recommendations || !Object.keys(res.locals.recommendations).length) {
-		return send404(res);
+		throw new createError.NotFound();
 	}
 
 	const { recommendations } = res.locals;
@@ -40,7 +40,6 @@ module.exports = (req, res) => {
 	} else {
 		res.set('Surrogate-Control', res.FT_HOUR_CACHE);
 	}
-
 	res.json(response);
 
 	metrics.count(`slots.ribbon.${Boolean(response.ribbon)}`);

@@ -1,6 +1,5 @@
 const es = require('@financial-times/n-es-client');
 const { metrics } = require('@financial-times/n-express');
-const send404 = require('../lib/send-404');
 
 module.exports = async (req, res, next) => {
 	try {
@@ -10,8 +9,9 @@ module.exports = async (req, res, next) => {
 	} catch (err) {
 		if (err.status === 404) {
 			metrics.count('content.es.notfound');
-			return send404(res);
+			throw err;
 		}
+
 		metrics.count('content.es.fail');
 		throw err;
 	}
