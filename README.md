@@ -19,7 +19,6 @@
 
 Query strings
 - slots = rhr or onward, defaults to both
-- onwardRowItemCount = number of items in each row, defaults to 3
 
 
 ### Response
