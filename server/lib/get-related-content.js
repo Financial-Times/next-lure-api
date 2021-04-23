@@ -1,62 +1,57 @@
 const es = require('@financial-times/n-es-client');
 const logger = require('@financial-times/n-logger').default;
-const { NEWS_CONCEPT_ID } = require('../constants');
 
 const getTrackablePredicate = concept => {
 	const predicate = concept.predicate.split('/').pop();
 	return ['about', 'isPrimarilyClassifiedBy'].includes(predicate) ? predicate : 'brand';
 };
 
-module.exports = (concept, count, parentContentId, news) => {
+module.exports = (
+	topicConcept,
+	brandConcept,
+	count,
+	parentContentId,
+	flags,
+) => {
+	const props = ['id', 'teaser.*'];
+	const searchObjects = [{
+		_source: props,
+		query: {
+			term: {
+				'annotations.id': topicConcept.id,
+			},
+		},
+		size: count + 1,
+	}];
 
-	let query;
-
-	if (typeof news === 'boolean') {
-		if (news) {
-			query = {
-				bool: {
-					must: [{
-						term: { 'annotations.id': concept.id }
-					},
-					{
-						term: { 'genreConcept.id': NEWS_CONCEPT_ID }
-					}]
-				}
-			};
-		} else {
-			query = {
-				bool: {
-					must: [{
-						term: { 'annotations.id': concept.id }
-					}],
-					must_not: [{
-						term: { 'genreConcept.id': NEWS_CONCEPT_ID }
-					}]
-				}
-			};
-		}
-	} else {
-		query = { term: { 'annotations.id': concept.id } };
+	if (brandConcept && !!flags.lureBrandOnwardSlot) {
+		searchObjects.push({
+			_source: props,
+			query: {
+				term: {
+					'annotations.id': brandConcept.id,
+				},
+			},
+			size: count + 1,
+		});
 	}
 
-	return es.search({
-		_source: ['id', 'teaser.*'],
-		query,
-		size: count + 1
-	}, 500)
+	return es.search(searchObjects[0], 500)
 		.catch(err => {
 			logger.error(err);
 			return [];
 		})
 		.then(items => ({
-			concept,
-			items: items
+			topicConcept,
+			topicItems: items
 				.filter(item => item.id !== parentContentId)
 				.map(item => {
-					item.originator = getTrackablePredicate(concept);
+					item.originator = getTrackablePredicate(topicConcept);
 					item.isPremium = item.accessLevel === 'premium'; // elasticsearch -> next-api field mapping
 					return item;
 				})
-				.slice(0, count)
+				.slice(0, count),
+			brandConcept,
+			brandItems: [],
 		}));
 };

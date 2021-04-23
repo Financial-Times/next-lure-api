@@ -5,41 +5,47 @@ const {RIBBON_COUNT, ONWARD_COUNT, BRAND_ONWARD_COUNT} = require('../constants')
 
 module.exports = async (content, {locals: {flags, slots}}) => {
 	const mostRelatedConcepts = getMostRelatedConcepts(content);
+	const topicConcept = mostRelatedConcepts[0];
 	const brandConcept = getBrandConcept(content);
 
 	if (!mostRelatedConcepts) {
 		return {};
 	}
 
-	const related = await getRelatedContent(mostRelatedConcepts[0], ONWARD_COUNT, content.id, null);
-	const brandRelated = await getRelatedContent(brandConcept, BRAND_ONWARD_COUNT, content.id, null);
+	const related = await getRelatedContent(topicConcept, brandConcept, ONWARD_COUNT, content.id, null, flags);
 
 	const brandRibbon = (flags.lureBrandOnwardSlot && flags.lureBrandOnwardSlot === 'brandRibbon');
 
 	const response = {};
 
-	if (!related.items.length) {
+	if (!related.topicItems.length) {
+		return response;
+	}
+
+	if (brandRibbon && !related.brandItems.length) {
 		return response;
 	}
 
 	if (slots.ribbon) {
 		response.ribbon = {
-			concept: brandRibbon ? brandRelated.concept : related.concept,
-			items: brandRibbon ? brandRelated.items.slice(0, RIBBON_COUNT) : related.items.slice(0, RIBBON_COUNT)
+			// If the lureBrandOnwardSlot is set to the brandRibbon variant, populate the ribbon with recent content
+			// from the brand, rather than from the topic.
+			concept: brandRibbon ? related.brandConcept : related.topicConcept,
+			items: brandRibbon ? related.brandItems.slice(0, RIBBON_COUNT) : related.topicItems.slice(0, RIBBON_COUNT)
 		};
 	}
 
 	if (slots.onward) {
 		response.onward = {
-			concept: related.concept,
-			items: related.items.slice(0, ONWARD_COUNT)
+			concept: related.topicConcept,
+			items: related.topicItems.slice(0, ONWARD_COUNT)
 		};
 	}
 
 	if (slots.brandOnward && !!brandConcept) {
 		response.brandOnward = {
-			concept: brandRelated.concept,
-			items: brandRelated.items.slice(0, BRAND_ONWARD_COUNT)
+			concept: related.brandConcept,
+			items: related.brandItems.slice(0, BRAND_ONWARD_COUNT)
 		};
 	}
 
