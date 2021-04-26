@@ -16,7 +16,6 @@ const getMockArgs = (sandbox, headers = {}) => {
 		locals: {
 			flags: {},
 			slots: { ribbon: true },
-			edition: 'uk',
 			content: {
 				id: 'content-id'
 			}
@@ -33,27 +32,14 @@ const getMockArgs = (sandbox, headers = {}) => {
 describe('get recommendations', () => {
 	let middleware;
 	let sandbox;
-	let signalStubs;
-	let responseFromEssentialStories;
+	let relatedContentStub;
 	let responseFromRelatedContent;
 	beforeEach(() => {
 		sandbox = sinon.sandbox.create();
-		signalStubs = {
-			relatedContent: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots),
-			essentialStories: sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots)
-		};
+		relatedContentStub = sandbox.stub().callsFake(async (content, {locals: {slots}}) => slots);
 		middleware = proxyquire('../../server/middleware/get-recommendations', {
-			'../signals': signalStubs
+			'../signals/related-content': relatedContentStub
 		});
-		responseFromEssentialStories = {
-			ribbon: {
-				title: 'From Essential Stories',
-				titleHref: '/essential-stories',
-				concept: 'concept from Essential Stories',
-				items: [{id:'es-1'},{id:'es-2'},{id:'es-3'},{id:'es-4'}]
-			}
-		};
-
 		responseFromRelatedContent = {
 			ribbon: {
 				title: 'From Related Content',
@@ -76,73 +62,13 @@ describe('get recommendations', () => {
 		it('use related content by default', async () => {
 			const mocks = getMockArgs(sandbox);
 			await middleware(...mocks);
-			expect(signalStubs.relatedContent.calledOnce).to.be.true;
+			expect(relatedContentStub.calledOnce).to.be.true;
 		});
-	});
-
-	context('essential stories', () => {
-
-		it('use essential stories when refererCohort flag is search, and content._editorialComponents is defined', async () => {
-			const mocks = getMockArgs(sandbox);
-			mocks[1].locals.flags.refererCohort = 'search';
-			mocks[1].locals.content._editorialComponents = ['editorial component'];
-			await middleware(...mocks);
-			expect(signalStubs.essentialStories.calledOnce).to.be.true;
-		});
-
-		it('move next signal to get data for onward slot', async () => {
-			const mocks = getMockArgs(sandbox);
-			mocks[1].locals.flags.refererCohort = 'search';
-			mocks[1].locals.content._editorialComponents = ['editorial component'];
-			mocks[1].locals.slots = { ribbon: true, onward: true };
-			const correctRibbonItems = Object.assign({}, responseFromEssentialStories.ribbon);
-			const correctOnwardItems = Object.assign({}, responseFromRelatedContent.onward);
-			signalStubs.essentialStories.returns(Promise.resolve(responseFromEssentialStories));
-			signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));
-			await middleware(...mocks);
-			expect(mocks[1].locals.recommendations).to.eql({ ribbon: correctRibbonItems, onward: correctOnwardItems });
-			expect(signalStubs.essentialStories.calledOnce).to.be.true;
-			expect(signalStubs.relatedContent.calledOnce).to.be.true;
-		});
-
-		it('fallback to next signal when no essentialStories results', async () => {
-			const mocks = getMockArgs(sandbox);
-			mocks[1].locals.flags.refererCohort = 'search';
-			mocks[1].locals.content._editorialComponents = ['editorial component'];
-			mocks[1].locals.slots = { ribbon: true, onward: true };
-			signalStubs.essentialStories.returns(Promise.resolve(null));
-			signalStubs.relatedContent.returns(Promise.resolve({ ribbon: 'from Related Content', onward: 'from Related Content' }));
-			await middleware(...mocks);
-			expect(mocks[1].locals.recommendations).to.eql({ ribbon: 'from Related Content', onward: 'from Related Content' });
-			expect(signalStubs.essentialStories.calledOnce).to.be.true;
-			expect(signalStubs.relatedContent.calledOnce).to.be.true;
-		});
-
 	});
 
 	context('Incomplete slot', () => {
 
 		let mocks;
-
-		context('[ ribbon ]', () => {
-
-			beforeEach(() => {
-				mocks = getMockArgs(sandbox);
-				mocks[1].locals.flags.refererCohort = 'search';
-				mocks[1].locals.content._editorialComponents = ['editorial component'];
-				mocks[1].locals.slots = { ribbon: true, onward: true };
-			});
-
-			it('should be set title/titleHref/concept from Related Content when recommendation items is less than the half of the slot', async () => {
-				responseFromEssentialStories.ribbon.items = responseFromEssentialStories.ribbon.items.slice(0,1);
-				signalStubs.essentialStories.returns(Promise.resolve(responseFromEssentialStories));
-				signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));
-				await middleware(...mocks);
-				expect(mocks[1].locals.recommendations.ribbon.title).to.eql('From Related Content');
-				expect(mocks[1].locals.recommendations.ribbon.titleHref).to.eql('/related-content');
-				expect(mocks[1].locals.recommendations.ribbon.concept).to.eql('concept from Related Content');
-			});
-		});
 
 		context('[ onward ]', () => {
 			beforeEach(() => {
@@ -151,13 +77,13 @@ describe('get recommendations', () => {
 			});
 
 			it('should be padded items from Related Content when a slot is short of items', async () => {
-				signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));
+				relatedContentStub.returns(Promise.resolve(responseFromRelatedContent));
 				await middleware(...mocks);
-				expect(signalStubs.relatedContent.calledOnce).to.be.true;
+				expect(relatedContentStub.calledOnce).to.be.true;
 			});
 
 			it('should be set title/titleHref/concept from Related Content when recommendation items is less than the half of the slot', async () => {
-				signalStubs.relatedContent.returns(Promise.resolve(responseFromRelatedContent));
+				relatedContentStub.returns(Promise.resolve(responseFromRelatedContent));
 				await middleware(...mocks);
 				expect(mocks[1].locals.recommendations.onward.title).to.eql('From Related Content');
 				expect(mocks[1].locals.recommendations.onward.titleHref).to.eql('/related-content');

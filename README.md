@@ -19,8 +19,6 @@
 
 Query strings
 - slots = rhr or onward, defaults to both
-- localTimeHour = local time hour, in 24h format
-- onwardRowItemCount = number of items in each row, defaults to 3
 
 
 ### Response

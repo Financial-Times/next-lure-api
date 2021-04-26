@@ -1,6 +1,5 @@
 const { expect } = require('chai');
 const es = require('@financial-times/n-es-client');
-const TEASER_PROPS = require('@financial-times/n-teaser').esQuery;
 const constants = require('../../server/constants');
 const subject = require('../../server/lib/get-related-content');
 const sinon = require('sinon');
@@ -70,13 +69,8 @@ describe('get related content', () => {
 	});
 
 	describe('teaser formats', () => {
-		it('requests n-teaser format by default', async () => {
-			await subject({id: 'concept-id', predicate: 'about'}, 3, 'parent-id');
-			expect(es.search.args[0][0]['_source']).to.deep.equal(TEASER_PROPS);
-		});
-
-		it('requests x-teaser format when specified', async () => {
-			await subject({id: 'concept-id', predicate: 'about'}, 3, 'parent-id', null, 'x');
+		it('requests teaser format', async () => {
+			await subject({id: 'concept-id', predicate: 'about'}, 3, 'parent-id', null);
 			expect(es.search.args[0][0]['_source']).to.deep.equal(['id', 'teaser.*']);
 		});
 	});

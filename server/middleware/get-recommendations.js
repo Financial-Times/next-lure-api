@@ -1,26 +1,9 @@
 const logger = require('@financial-times/n-logger').default;
-const { metrics } = require('@financial-times/n-express');
 
-const {
-	relatedContent,
-	essentialStories
-} = require('../signals');
+const relatedContent = require('../signals/related-content');
 const { RIBBON_COUNT, ONWARD_COUNT } = require('../constants');
 const slotsCount = { ribbon: RIBBON_COUNT, onward: ONWARD_COUNT };
 const dedupeById = require('../lib/dedupe-by-id');
-
-const modelIsFulfilled = (slots, model) => {
-	return !Object.keys(excludeCompletedSlots(slots, model)).length;
-};
-
-const excludeCompletedSlots = (slots, model) => {
-	return Object.keys(slots).reduce((obj, slotName) => {
-		if (!model[slotName]) {
-			obj[slotName] = true;
-		}
-		return obj;
-	}, {});
-};
 
 const	padIncompletedSlots = (slots, model, paddingItems) => {
 	Object.keys(slots).forEach((slotName) => {
@@ -44,39 +27,8 @@ const	padIncompletedSlots = (slots, model, paddingItems) => {
 module.exports = async (req, res, next) => {
 	try {
 		let recommendations = {};
-
-		const signalStack = [];
-
-		if (res.locals.flags.refererCohort === 'search'
-			&& res.locals.content._editorialComponents
-			&& res.locals.content._editorialComponents.length > 0
-		) {
-			signalStack.push(essentialStories);
-			metrics.count('signals.essentialStories');
-		}
-
-		let signal;
-
-		while ((signal = signalStack.shift()) && !modelIsFulfilled(res.locals.slots, recommendations)) {
-			const newRecommendations = await signal(res.locals.content, { locals: Object.assign({}, res.locals, {
-				slots: excludeCompletedSlots(res.locals.slots, recommendations)
-			}), query: req.query});
-			recommendations = Object.assign(recommendations, newRecommendations);
-		}
-
-		const needPadding = Object.keys(res.locals.slots).map(slotName => {
-			const isSlotNotExist = !recommendations[slotName] ? true : false;
-			const isShortOfItems = !isSlotNotExist && recommendations[slotName].items.length < slotsCount[slotName] ? true : false;
-			return isSlotNotExist || isShortOfItems;
-		}).includes(true);
-
-		metrics.count(`signals.needPadding.${needPadding}`);
-
-		if (needPadding) {
-			const paddingItems = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
-			padIncompletedSlots(res.locals.slots, recommendations, paddingItems);
-		}
-
+		const relatedContentItems = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
+		padIncompletedSlots(res.locals.slots, recommendations, relatedContentItems);
 		res.locals.recommendations = recommendations;
 		next();
 	} catch (err) {

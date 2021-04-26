@@ -20,7 +20,6 @@ const middleware = require('./middleware');
 
 const middlewareStack = [
 	middleware.handleOptions,
-	middleware.cache,
 	middleware.getContent,
 	middleware.getRecommendations,
 	middleware.respond
