@@ -12,7 +12,7 @@ module.exports = async (content, {locals: {flags, slots}}) => {
 		return {};
 	}
 
-	const related = await getRelatedContent(topicConcept, brandConcept, ONWARD_COUNT, content.id, null, flags);
+	const related = await getRelatedContent(topicConcept, brandConcept, ONWARD_COUNT, content.id, flags);
 
 	const brandRibbon = (flags.lureBrandOnwardSlot && flags.lureBrandOnwardSlot === 'brandRibbon');
 
