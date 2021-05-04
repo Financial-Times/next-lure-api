@@ -14,15 +14,11 @@ module.exports = async (content, {locals: {flags, slots}}) => {
 
 	const related = await getRelatedContent(topicConcept, brandConcept, ONWARD_COUNT, content.id, flags);
 
-	const brandRibbon = (flags.lureBrandOnwardSlot && flags.lureBrandOnwardSlot === 'brandRibbon');
+	const brandRibbon = (flags.lureBrandOnwardSlot && flags.lureBrandOnwardSlot === 'brandRibbon' && related.brandItems.length);
 
 	const response = {};
 
 	if (!related.topicItems.length) {
-		return response;
-	}
-
-	if (brandRibbon && !related.brandItems.length) {
 		return response;
 	}
 
