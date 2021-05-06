@@ -1,6 +1,5 @@
 const { expect } = require('chai');
 const es = require('@financial-times/n-es-client');
-const constants = require('../../server/constants');
 const subject = require('../../server/lib/get-related-content');
 const sinon = require('sinon');
 
@@ -11,10 +10,10 @@ describe('get related content', () => {
 	afterEach(() => {
 		es.search.restore();
 	});
-	it('request count + 1 articles', async () => {
+	it('request count x 2 articles', async () => {
 		const concept = {id: 'concept-id', predicate: 'http://www.ft.com/ontology/annotation/about', directType: 'http://www.ft.com/ontology/Topic'};
 		await subject(concept, 3, 'parent-id');
-		expect(es.search.args[0][0].size).to.equal(4);
+		expect(es.search.args[0][0].size).to.equal(6);
 	});
 
 	it('remove parent article id', async () => {
@@ -23,55 +22,12 @@ describe('get related content', () => {
 		expect(result.items.map(obj => obj.id)).to.eql(['not-parent-id']);
 	});
 
-	it('by default include all genres', async () => {
+	it('query by concept id', async () => {
 		const concept = {id: 'concept-id', predicate: 'http://www.ft.com/ontology/annotation/about', directType: 'http://www.ft.com/ontology/Topic'};
 		await subject(concept, 3, 'parent-id');
 		expect(es.search.args[0][0].query).to.eql({ term: { 'annotations.id': 'concept-id' } });
 	});
 
-	it('can exclude news', async () => {
-		const concept = {id: 'concept-id', predicate: 'http://www.ft.com/ontology/annotation/about', directType: 'http://www.ft.com/ontology/Topic'};
-		await subject(concept, 3, 'parent-id', false);
-		expect(es.search.args[0][0].query).to.eql({
-			'bool': {
-				'must': [
-					{
-						'term': {
-							'annotations.id': 'concept-id'
-						}
-					}
-				],
-				'must_not': [
-					{
-						'term': {
-							'genreConcept.id': constants.NEWS_CONCEPT_ID
-						}
-					}
-				]
-			}
-		});
-	});
-
-	it('can exclude non news', async () => {
-		const concept = {id: 'concept-id', predicate: 'http://www.ft.com/ontology/annotation/about', directType: 'http://www.ft.com/ontology/Topic'};
-		await subject(concept, 3, 'parent-id', true);
-		expect(es.search.args[0][0].query).to.eql({
-			'bool': {
-				'must': [
-					{
-						'term': {
-							'annotations.id': 'concept-id'
-						}
-					},
-					{
-						'term': {
-							'genreConcept.id': constants.NEWS_CONCEPT_ID
-						}
-					}
-				]
-			}
-		});
-	});
 
 	describe('teaser formats', () => {
 		it('requests teaser format', async () => {

@@ -34,8 +34,8 @@ module.exports = (_, res) => {
 		response.onward = finishModel(recommendations.onward, 'Latest');
 	}
 
-	if (recommendations.brandOnward) {
-		response.brandOnward = finishModel(recommendations.brandOnward, 'More');
+	if (recommendations.onward2) {
+		response.onward2 = finishModel(recommendations.onward2, 'More');
 	}
 
 	res.set('Cache-Control', res.FT_NO_CACHE);
@@ -48,4 +48,5 @@ module.exports = (_, res) => {
 
 	metrics.count(`slots.ribbon.${Boolean(response.ribbon)}`);
 	metrics.count(`slots.onward.${Boolean(response.onward)}`);
+	metrics.count(`slots.onward2.${Boolean(response.onward2)}`);
 };

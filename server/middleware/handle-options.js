@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
 		.reduce((map, key) => {
 			map[key] = true;
 			return map;
-		}, {}) : {'ribbon': true, 'onward': true, 'brandOnward': true};
+		}, {}) : {'ribbon': true, 'onward': true, 'onward2': true};
 
 	res.locals.userId = req.query.userId;
 	res.locals.secureSessionToken = req.get('FT-Session-s-Token') || req.cookies.FTSession_s;

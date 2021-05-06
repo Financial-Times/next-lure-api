@@ -13,51 +13,36 @@ const getTrackablePredicate = concept => {
 };
 
 module.exports = (
-	topicConcept,
-	brandConcept,
+	concept,
 	count,
 	parentContentId,
-	flags,
 ) => {
 	const props = ['id', 'teaser.*'];
-	const searchObjects = [{
+
+	return es.search({
 		_source: props,
 		query: {
 			term: {
-				'annotations.id': topicConcept.id,
+				'annotations.id': concept.id,
 			},
 		},
-		size: count + 1,
-	}];
-
-	if (brandConcept && !!flags.lureBrandOnwardSlot) {
-		searchObjects.push({
-			_source: props,
-			query: {
-				term: {
-					'annotations.id': brandConcept.id,
-				},
-			},
-			size: count + 1,
-		});
-	}
-
-	return es.search(searchObjects[0], 500)
+		size: count * 2, // fetch too many in case duplicates are removed
+	}, 500)
 		.catch(err => {
 			logger.error(err);
 			return [];
 		})
-		.then(items => ({
-			topicConcept,
-			topicItems: items
-				.filter(item => item.id !== parentContentId)
-				.map(item => {
-					item.originator = getTrackablePredicate(topicConcept);
-					item.isPremium = item.accessLevel === 'premium'; // elasticsearch -> next-api field mapping
-					return item;
-				})
-				.slice(0, count),
-			brandConcept,
-			brandItems: [],
-		}));
+		.then(items => {
+			const originator = getTrackablePredicate(concept);
+			return {
+				concept,
+				items: items
+					.filter(item => item.id !== parentContentId)
+					.map(item => {
+						item.originator = originator;
+						item.isPremium = item.accessLevel === 'premium'; // elasticsearch -> next-api field mapping
+						return item;
+					})
+			};
+		});
 };
