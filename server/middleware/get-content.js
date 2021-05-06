@@ -3,7 +3,18 @@ const { metrics } = require('@financial-times/n-express');
 
 module.exports = async (req, res, next) => {
 	try {
-		res.locals.content = await es.get(req.params.contentId, {}, 500);
+		res.locals.content = await es.get(
+			req.params.contentId,
+			{
+				_source: [
+					'id',
+					'annotations',
+					'displayConcept',
+					'publishedDate',
+				],
+			},
+			500
+		);
 		metrics.count('content.es.success');
 		next();
 	} catch (err) {
