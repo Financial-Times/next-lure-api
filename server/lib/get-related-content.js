@@ -3,7 +3,13 @@ const logger = require('@financial-times/n-logger').default;
 
 const getTrackablePredicate = concept => {
 	const predicate = concept.predicate.split('/').pop();
-	return ['about', 'isPrimarilyClassifiedBy'].includes(predicate) ? predicate : 'brand';
+	const type = concept.directType.split('/').pop().toLowerCase();
+
+	if (predicate === 'about' || predicate === 'isPrimarilyClassifiedBy') {
+		return predicate;
+	}
+
+	return `${predicate}-${type}`;
 };
 
 module.exports = (
