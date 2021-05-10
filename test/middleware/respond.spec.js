@@ -8,6 +8,31 @@ const FT_HOUR_CACHE = 'hour cache';
 
 describe('respond middleware', () => {
 
+	it('throws when res.locals.recommendation is not defined', () => {
+		const res = {
+			locals: {
+			},
+			set: sinon.spy(),
+			json: () => {},
+			FT_NO_CACHE,
+			FT_HOUR_CACHE,
+		};
+		expect(() => subject({}, res)).to.throw('Not Found');
+	});
+
+	it('throws when there are no recommendation slots', () => {
+		const res = {
+			locals: {
+				recommendations: {}
+			},
+			set: sinon.spy(),
+			json: () => {},
+			FT_NO_CACHE,
+			FT_HOUR_CACHE,
+		};
+		expect(() => subject({}, res)).to.throw('Not Found');
+	});
+
 	it('will cache the response', () => {
 		const res = {
 			locals: {

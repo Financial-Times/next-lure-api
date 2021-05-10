@@ -1,6 +1,8 @@
 const chai = require('chai');
+const createError = require('http-errors');
 const expect = chai.expect;
 chai.use(require('sinon-chai'));
+chai.use(require('chai-as-promised'));
 
 const sinon = require('sinon');
 const es = require('@financial-times/n-es-client');
@@ -44,11 +46,10 @@ describe('get content', () => {
 		expect(es.get).calledWith('content-id');
 	});
 
-	it('respond with 404 if no content found', async () => {
+	it('throw 404 if no content found', async () => {
 		const mocks = getMockArgs(sandbox);
-		es.get.throws({status: 404});
-		await middleware(...mocks);
-		expect(mocks[1].status).calledWith(404);
+		es.get.throws(new createError.NotFound());
+		await expect(middleware(...mocks)).to.be.rejectedWith(/Not Found/);
 	});
 
 });
