@@ -1,7 +1,7 @@
 const { metrics } = require('@financial-times/n-express');
 const createError = require('http-errors');
 
-const finishModel = (model) => {
+const finishModel = (model, defaultTitleIntro) => {
 	const listObj = {};
 	listObj.items = model.items ? model.items.slice() : [];
 	if (!model.concept) {
@@ -12,7 +12,7 @@ const finishModel = (model) => {
 	}
 
 	return Object.assign({}, {
-		title:  model.title || `Latest ${model.concept.preposition} ${model.concept.prefLabel}`,
+		title:  model.title || `${defaultTitleIntro} ${model.concept.preposition} ${model.concept.prefLabel}`,
 		titleHref:  model.titleHref || model.concept.relativeUrl,
 		concept: model.concept
 	}, listObj);
@@ -27,11 +27,15 @@ module.exports = (_, res) => {
 	const response = {};
 
 	if (recommendations.ribbon) {
-		response.ribbon = finishModel(recommendations.ribbon);
+		response.ribbon = finishModel(recommendations.ribbon, 'Latest');
 	}
 
 	if (recommendations.onward) {
-		response.onward = finishModel(recommendations.onward);
+		response.onward = finishModel(recommendations.onward, 'Latest');
+	}
+
+	if (recommendations.onward2) {
+		response.onward2 = finishModel(recommendations.onward2, 'More');
 	}
 
 	res.set('Cache-Control', res.FT_NO_CACHE);
@@ -44,4 +48,5 @@ module.exports = (_, res) => {
 
 	metrics.count(`slots.ribbon.${Boolean(response.ribbon)}`);
 	metrics.count(`slots.onward.${Boolean(response.onward)}`);
+	metrics.count(`slots.onward2.${Boolean(response.onward2)}`);
 };

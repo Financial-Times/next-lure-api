@@ -1,62 +1,48 @@
 const es = require('@financial-times/n-es-client');
 const logger = require('@financial-times/n-logger').default;
-const { NEWS_CONCEPT_ID } = require('../constants');
 
 const getTrackablePredicate = concept => {
 	const predicate = concept.predicate.split('/').pop();
-	return ['about', 'isPrimarilyClassifiedBy'].includes(predicate) ? predicate : 'brand';
-};
+	const type = concept.directType.split('/').pop().toLowerCase();
 
-module.exports = (concept, count, parentContentId, news) => {
-
-	let query;
-
-	if (typeof news === 'boolean') {
-		if (news) {
-			query = {
-				bool: {
-					must: [{
-						term: { 'annotations.id': concept.id }
-					},
-					{
-						term: { 'genreConcept.id': NEWS_CONCEPT_ID }
-					}]
-				}
-			};
-		} else {
-			query = {
-				bool: {
-					must: [{
-						term: { 'annotations.id': concept.id }
-					}],
-					must_not: [{
-						term: { 'genreConcept.id': NEWS_CONCEPT_ID }
-					}]
-				}
-			};
-		}
-	} else {
-		query = { term: { 'annotations.id': concept.id } };
+	if (predicate === 'about' || predicate === 'isPrimarilyClassifiedBy') {
+		return predicate;
 	}
 
+	return `${predicate}-${type}`;
+};
+
+module.exports = (
+	concept,
+	count,
+	parentContentId,
+) => {
+	const props = ['id', 'teaser.*'];
+
 	return es.search({
-		_source: ['id', 'teaser.*'],
-		query,
-		size: count + 1
+		_source: props,
+		query: {
+			term: {
+				'annotations.id': concept.id,
+			},
+		},
+		size: count * 2, // fetch too many in case duplicates are removed
 	}, 500)
 		.catch(err => {
 			logger.error(err);
 			return [];
 		})
-		.then(items => ({
-			concept,
-			items: items
-				.filter(item => item.id !== parentContentId)
-				.map(item => {
-					item.originator = getTrackablePredicate(concept);
-					item.isPremium = item.accessLevel === 'premium'; // elasticsearch -> next-api field mapping
-					return item;
-				})
-				.slice(0, count)
-		}));
+		.then(items => {
+			const originator = getTrackablePredicate(concept);
+			return {
+				concept,
+				items: items
+					.filter(item => item.id !== parentContentId)
+					.map(item => {
+						item.originator = originator;
+						item.isPremium = item.accessLevel === 'premium'; // elasticsearch -> next-api field mapping
+						return item;
+					})
+			};
+		});
 };

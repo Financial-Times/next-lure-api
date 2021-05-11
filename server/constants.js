@@ -1,7 +1,5 @@
-const {genre} = require('@financial-times/n-concept-ids');
-
 module.exports = {
-	NEWS_CONCEPT_ID: genre.news,
 	RIBBON_COUNT: 4,
-	ONWARD_COUNT: 8
+	ONWARD_COUNT: 8,
+	ONWARD2_COUNT: 4,
 };
