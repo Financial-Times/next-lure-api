@@ -36,46 +36,4 @@ describe('get related content', () => {
 			expect(es.search.args[0][0]['_source']).to.deep.equal(['id', 'teaser.*']);
 		});
 	});
-
-	describe('tracking', () => {
-
-		it('output correct tracking for about', async () => {
-			const result = await subject({
-				predicate: 'http://www.ft.com/ontology/annotation/about',
-				directType: 'http://www.ft.com/ontology/Topic',
-				id: 0,
-			});
-			expect(result.items[0].originator).to.equal('about');
-		});
-
-		it('output correct tracking for isPrimarilyClassifiedBy', async () => {
-			const result = await subject({
-				predicate: 'http://www.ft.com/ontology/annotation/isPrimarilyClassifiedBy',
-				directType: 'http://www.ft.com/ontology/Topic',
-				id: 0,
-			});
-			expect(result.items[0].originator).to.equal('isPrimarilyClassifiedBy');
-		});
-
-		it('output correct tracking for brand with isClassifiedBy predicate', async () => {
-			const result = await subject({
-				predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-				directType: 'http://www.ft.com/ontology/product/Brand',
-				id: 0,
-			});
-			expect(result.items[0].originator).to.equal('isClassifiedBy-brand');
-		});
-
-		it('output correct tracking for brand with isImplicitlyClassifiedBy predicate', async () => {
-			const result = await subject({
-				predicate: 'http://www.ft.com/ontology/classification/isImplicitlyClassifiedBy',
-				directType: 'http://www.ft.com/ontology/product/Brand',
-				id: 0,
-			});
-			expect(result.items[0].originator).to.equal('isImplicitlyClassifiedBy-brand');
-		});
-
-
-	});
-
 });
