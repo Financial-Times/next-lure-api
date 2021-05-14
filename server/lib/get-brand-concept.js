@@ -30,6 +30,14 @@ module.exports.priorityList = new Map([
 	[conceptIds.brand.specialReport, -1],
 ]);
 
+// A list of non-brand concepts (mainly genres) that a user might
+// want to continue reading more of.
+module.exports.fallbackConcepts = [
+	conceptIds.genre.letter,
+	conceptIds.genre.obituary,
+	conceptIds.genre.recipe,
+];
+
 function getPriorityByConceptId (id) {
 	if (module.exports.priorityList.has(id)) {
 		return (module.exports.priorityList.get(id) || 0) + 1;
@@ -42,6 +50,9 @@ const sortBrandsByScore = scoredSort(({predicate, id, directType}) => {
 		const priority = getPriorityByConceptId(id);
 		const weight = predicate === Predicate.isClassifiedBy ? 2 : 1;
 		return Math.max(priority * weight + weight, weight);
+	}
+	if (module.exports.fallbackConcepts.includes(id)) {
+		return 1;
 	}
 }, 1);
 
