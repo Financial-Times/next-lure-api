@@ -1,20 +1,28 @@
 const conceptIds = require('@financial-times/n-concept-ids');
-const { Predicate, ConceptType, withType, findNewsletterBrand } = require('./content');
+const { Predicate, ConceptType, findNewsletterBrand } = require('./content');
 const scoredSort = require('./scored-sort');
 
 module.exports = sortAnnotations;
 
-const priorityList = new Map([
-	// Brands that Editorially important and have a high likelyhood of being
-	// in competition with other brands when scoring.
-	[conceptIds.brand.climateCapital, 2],
+const Priority = {
+	HIGH: 4,
+	MEDIUM: 2,
+	LOW: 1,
+	NEGATIVE: -1,
+};
 
-	// other weighted brands
-	[conceptIds.brand.etfHub, 1],
-	[conceptIds.brand.htsi, 1],
-	[conceptIds.brand.magazine, 1],
-	[conceptIds.brand.globetrotter, 1],
-	[conceptIds.brand.moralMoney],
+module.exports.priorityList = new Map([
+	// Brands that are Editorially important AND have a high likelyhood of being
+	// in competition with other prioritsed brands (i.e. also in the list below) when scoring.
+	// These should not always win, but only win some of the time.
+	[conceptIds.brand.climateCapital, Priority.HIGH],
+
+	// other prioritsed brands
+	[conceptIds.brand.etfHub, Priority.MEDIUM],
+	[conceptIds.brand.htsi, Priority.MEDIUM],
+	[conceptIds.brand.magazine, Priority.MEDIUM],
+	[conceptIds.brand.globetrotter, Priority.MEDIUM],
+	[conceptIds.brand.moralMoney, Priority.LOW],
 
 	// Weighted Down:
 	// The Special Reports brand has many sub-brands. When one of the sub-brands
@@ -22,20 +30,24 @@ const priorityList = new Map([
 	[conceptIds.brand.specialReport, -1],
 ]);
 
-const sortBrandsByScore = scoredSort([
-	({predicate}) => Predicate.isClassifiedBy === predicate && 1.5,
-	({id}) => priorityList.has(id) && (priorityList.get(id) || 0) + 1,
-]);
+function getPriorityByConceptId (id) {
+	if (module.exports.priorityList.has(id)) {
+		return (module.exports.priorityList.get(id) || 0) + 1;
+	}
+	return 0;
+}
+
+const sortBrandsByScore = scoredSort(({predicate, id, directType}) => {
+	if (directType === ConceptType.Brand) {
+		const priority = getPriorityByConceptId(id);
+		const weight = predicate === Predicate.isClassifiedBy ? 2 : 1;
+		return Math.max(priority * weight + weight, weight);
+	}
+}, 1);
 
 function sortAnnotations (content) {
 	if (!content.annotations) {
 		return undefined;
-	}
-
-	const brands = content.annotations.filter(withType(ConceptType.Brand));
-
-	if (brands.length <= 1) {
-		return brands[0];
 	}
 
 	const newsletter = findNewsletterBrand(content);
@@ -44,5 +56,5 @@ function sortAnnotations (content) {
 		return newsletter;
 	}
 
-	return sortBrandsByScore(brands)[0];
+	return sortBrandsByScore(content.annotations)[0];
 }
