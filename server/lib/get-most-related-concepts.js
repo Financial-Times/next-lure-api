@@ -4,6 +4,7 @@ const scoredSort = require('./scored-sort');
 module.exports = sortAnnotations;
 
 const rankedPredicates = rank(
+	// Highest ranked first
 	Predicate.about,
 	Predicate.isPrimarilyClassifiedBy,
 	Predicate.implicitlyAbout,
@@ -11,6 +12,7 @@ const rankedPredicates = rank(
 );
 
 const rankedTypes = rank(
+	// Highest ranked first
 	ConceptType.Organisation,
 	ConceptType.Location,
 	ConceptType.Topic,
@@ -18,7 +20,9 @@ const rankedTypes = rank(
 );
 
 const sortAnnotationsByScore = scoredSort([
+	// The predicate is the most important factor when choosing the annotation
 	({predicate}) => Math.pow(rankedPredicates[predicate], 2),
+	// The concept type is used as tie-break when two annotations have the same predicate
 	({directType}) => rankedTypes[directType],
 ], 2);
 
@@ -29,6 +33,7 @@ function sortAnnotations (content) {
 
 	const sortedAnnotations = sortAnnotationsByScore(content.annotations);
 
+	// The display tag is an Editorially selected annotation.
 	const displayTag = content.displayConcept && content.displayConcept.isDisplayTag ? content.displayConcept : null;
 
 	if(displayTag) {
