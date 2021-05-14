@@ -1,5 +1,5 @@
 const conceptIds = require('@financial-times/n-concept-ids');
-const { Predicate, ConceptType, withType } = require('./content');
+const { Predicate, ConceptType, withType, findNewsletterBrand } = require('./content');
 const scoredSort = require('./scored-sort');
 
 module.exports = sortAnnotations;
@@ -36,6 +36,12 @@ function sortAnnotations (content) {
 
 	if (brands.length <= 1) {
 		return brands[0];
+	}
+
+	const newsletter = findNewsletterBrand(content);
+
+	if (newsletter) {
+		return newsletter;
 	}
 
 	return sortBrandsByScore(brands)[0];

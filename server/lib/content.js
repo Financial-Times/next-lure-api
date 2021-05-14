@@ -1,3 +1,5 @@
+const conceptIds = require('@financial-times/n-concept-ids');
+
 const Predicate = Object.freeze({
 	about: 'http://www.ft.com/ontology/annotation/about',
 	isPrimarilyClassifiedBy: 'http://www.ft.com/ontology/classification/isPrimarilyClassifiedBy',
@@ -34,10 +36,25 @@ function withPredicate (predicate, type) {
 	return checkPredicate;
 }
 
+function findNewsletterBrand (content) {
+	if (!content.annotations) {
+		return;
+	}
+
+	const isNewsletter = Boolean(content.annotations.find(({id}) => id === conceptIds.genre.newsletter));
+
+	if (!isNewsletter) {
+		return;
+	}
+
+	return content.annotations.find(withPredicate(Predicate.isClassifiedBy, ConceptType.Brand));
+}
+
 module.exports = {
 	ConceptType,
 	Predicate,
 	withPredicate,
 	withGenre,
 	withType,
+	findNewsletterBrand,
 };
