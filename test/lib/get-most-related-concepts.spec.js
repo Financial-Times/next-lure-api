@@ -1,4 +1,5 @@
 const {expect} = require('chai');
+const { ConceptType, Predicate } = require('../../server/lib/content');
 const subject = require('../../server/lib/get-most-related-concepts');
 
 describe('get most related concepts', () => {
@@ -6,34 +7,34 @@ describe('get most related concepts', () => {
 		const result = subject({
 			annotations: [
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/Topic',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Genre,
 					id: 'should-be-ignored',
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/product/Brand',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Brand,
 					id: 3,
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/implicitlyAbout',
+					predicate: Predicate.implicitlyAbout,
 					id: 2,
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/Topic',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Genre,
 					id: 'should-be-ignored',
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isPrimarilyClassifiedBy',
+					predicate: Predicate.isPrimarilyClassifiedBy,
 					id: 1,
 				},{
-					predicate: 'http://www.ft.com/ontology/annotation/about',
+					predicate: Predicate.about,
 					id: 0,
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/Topic',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Genre,
 					id: 'should-be-ignored',
 				}
 			]
@@ -49,12 +50,12 @@ describe('get most related concepts', () => {
 		const result = subject({
 			annotations: [
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/Topic',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Genre,
 					id: 'should-be-ignored',
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isPrimarilyClassifiedBy',
+					predicate: Predicate.isPrimarilyClassifiedBy,
 					id: 1
 				}
 			]
@@ -67,13 +68,13 @@ describe('get most related concepts', () => {
 		const result = subject({
 			annotations: [
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/Topic',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Genre,
 					id: 'should-be-ignored',
 				},
 				{
-					predicate: 'http://www.ft.com/ontology/classification/isClassifiedBy',
-					directType: 'http://www.ft.com/ontology/Topic',
+					predicate: Predicate.isClassifiedBy,
+					directType: ConceptType.Genre,
 					id: 'should-be-ignored',
 				},
 			]
