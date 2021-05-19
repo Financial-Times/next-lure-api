@@ -129,11 +129,11 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('use brand stories when flag lureBrandOnwardSlot=brandRibbon ', () => {
+		it('use brand stories when flag onwardJourneyTests=variant1 ', () => {
 			const concept = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const content = { id: 'parent-id', annotations: [concept] };
 			const slots = {ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'brandRibbon'};
+			const flags = {onwardJourneyTests: 'variant1'};
 
 			getRelatedContent.resolves({
 				concept,
@@ -148,7 +148,7 @@ describe('related-content signal', () => {
 	});
 
 	context('onward2 slot', () => {
-		it('doesn\`t return onward2 slot if lureBrandOnwardSlot flag is off', () => {
+		it('doesn\`t return onward2 slot if onwardJourneyTests flag is off', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id' };
@@ -184,7 +184,7 @@ describe('related-content signal', () => {
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id' };
 			const slots = {onward2: true, onward: false};
-			const flags = {lureBrandOnwardSlot: 'brandRibbon'};
+			const flags = {onwardJourneyTests: 'variant1'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -204,12 +204,12 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('returns correct stories in slot (Variant: lureBrandOnwardSlot=brandRibbon)', () => {
+		it('returns correct stories in slot (Variant: onwardJourneyTests=variant1)', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'brandRibbon'};
+			const flags = {onwardJourneyTests: 'variant1'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -233,12 +233,12 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('returns correct stories in slot (Variant: lureBrandOnwardSlot=noBrandRibbon)', () => {
+		it('returns correct stories in slot (Variant: onwardJourneyTests=variant2)', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'noBrandRibbon'};
+			const flags = {onwardJourneyTests: 'variant2'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -262,12 +262,12 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('Shift stories from onward2 slot to onward slot if the latter is empty (Variant: lureBrandOnwardSlot=brandRibbon)', () => {
+		it('Shift stories from onward2 slot to onward slot if the latter is empty (Variant: onwardJourneyTests=variant1)', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true};
-			const flags = {lureBrandOnwardSlot: 'brandRibbon'};
+			const flags = {onwardJourneyTests: 'variant1'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -289,12 +289,12 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('Shift stories from onward2 slot to onward slot if the latter is empty (Variant: lureBrandOnwardSlot=noBrandRibbon)', () => {
+		it('Shift stories from onward2 slot to onward slot if the latter is empty (Variant: onwardJourneyTests=variant2)', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true};
-			const flags = {lureBrandOnwardSlot: 'noBrandRibbon'};
+			const flags = {onwardJourneyTests: 'variant2'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -321,7 +321,7 @@ describe('related-content signal', () => {
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'brandRibbon'};
+			const flags = {onwardJourneyTests: 'variant1'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -352,7 +352,7 @@ describe('related-content signal', () => {
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'noBrandRibbon'};
+			const flags = {onwardJourneyTests: 'variant2'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -378,12 +378,12 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('does not unnecessarily remove duplicate content (Variant: lureBrandOnwardSlot=noBrandRibbon)', () => {
+		it('does not unnecessarily remove duplicate content (Variant: onwardJourneyTests=variant2)', () => {
 			const brand = annotation('brand-id', ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'noBrandRibbon'};
+			const flags = {onwardJourneyTests: 'variant2'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
@@ -416,12 +416,12 @@ describe('related-content signal', () => {
 			});
 		});
 
-		it('does not unnecessarily remove duplicate content (Variant:lureBrandOnwardSlot=brandRibbon)', () => {
+		it('does not unnecessarily remove duplicate content (Variant:onwardJourneyTests=variant1)', () => {
 			const brand = annotation('brand-id', ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
-			const flags = {lureBrandOnwardSlot: 'brandRibbon'};
+			const flags = {onwardJourneyTests: 'variant1'};
 
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);

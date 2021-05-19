@@ -37,9 +37,6 @@ JSON response on which one or more of the following keys - `rhr`, `onward`, `int
 
 May (in v1, for backwards compatibility) return an array of objects like the above
 
+### Flags
 
-### Plans
-- All requests may send a content uuid or concept for contextual targeting
-- Requests should include feature flags and any ab tests/cohorts the user is in
-- Requests may include the user uuid for more personalised targeting
-- Request may specify things to exclude from the space of possible recommendations
+There is a permanent mutlivariate test (MVT) flag called `onwardJourneyTests` that's used for testing new iterations of the onward journey on articles. Ideally we shouldn't be running more than one A/B or MVT test at a time because this makes test results confusing. The idea is to reuse the same flags for all tests and it will feel wrong to have multiple flags in use within the codebase.

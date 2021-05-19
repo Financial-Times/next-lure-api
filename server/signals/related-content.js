@@ -15,7 +15,7 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		topic = getRelatedContent(topicConcept, count, content.id);
 	}
 
-	if (flags.lureBrandOnwardSlot) {
+	if (flags.onwardJourneyTests) {
 		const brandConcept = getBrandConcept(content);
 		// In some cases, such as for Podcast episodes, the displayConcept is set to be a Brand
 		const isDuplicate = brandConcept && topicConcept && topicConcept.id === brandConcept.id;
@@ -35,11 +35,11 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		ribbon = brand;
 		onward = brand;
 	} else if (topic && brand) {
-		if (flags.lureBrandOnwardSlot === 'brandRibbon') {
+		if (flags.onwardJourneyTests === 'variant1') {
 			ribbon = brand;
 			onward = topic;
 			onward2 = brand;
-		} else if (flags.lureBrandOnwardSlot) {
+		} else if (flags.onwardJourneyTests === 'variant2') {
 			ribbon = topic;
 			onward = brand;
 			onward2 = topic;
