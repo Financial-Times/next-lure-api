@@ -145,6 +145,19 @@ describe('related-content signal', () => {
 				expect(result.ribbon.items.map(obj => obj.id)).to.eql([ 1, 2, 3, 4 ]);
 			});
 		});
+
+		it('don\'t show if no teasers', () => {
+			const concept = annotation(0, ConceptType.Topic, Predicate.about);
+			const content = { id: 'parent-id', annotations: [concept] };
+			const slots = {ribbon: true};
+			getMostRelatedConcepts.returns([concept]);
+			getRelatedContent.resolves({
+				concept,
+				items: []
+			});
+			const promise = subject(content, {locals: {slots}});
+			return expect(promise).to.eventually.eql({});
+		});
 	});
 
 	context('onward2 slot', () => {

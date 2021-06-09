@@ -27,22 +27,29 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	let ribbon;
 	let onward;
 	let onward2;
+	let contentSelection = {};
 
 	if (topic && !brand) {
 		ribbon = topic;
 		onward = topic;
+		contentSelection.ribbon = contentSelection.onward = 'topic';
 	} else if (!topic && brand) {
 		ribbon = brand;
 		onward = brand;
+		contentSelection.ribbon = contentSelection.onward = 'brand';
 	} else if (topic && brand) {
 		if (flags.onwardJourneyTests === 'variant1') {
 			ribbon = brand;
 			onward = topic;
 			onward2 = brand;
+			contentSelection.ribbon = contentSelection.onward2 = 'brand';
+			contentSelection.onward = 'topic';
 		} else if (flags.onwardJourneyTests === 'variant2') {
 			ribbon = topic;
 			onward = brand;
 			onward2 = topic;
+			contentSelection.ribbon = contentSelection.onward2 = 'topic';
+			contentSelection.onward = 'brand';
 		}
 	}
 
@@ -62,6 +69,7 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 			concept: {
 				...data.concept,
 			},
+			contentSelection: contentSelection[name],
 			items: data.items.slice(0),
 		};
 	}
