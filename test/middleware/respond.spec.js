@@ -38,7 +38,7 @@ describe('respond middleware', () => {
 			locals: {
 				recommendations: {
 					items: []
-				}
+				},
 			},
 			set: sinon.spy(),
 			json: () => {},
@@ -67,5 +67,44 @@ describe('respond middleware', () => {
 		subject({}, res);
 		expect(res.set.calledWith('Cache-Control', FT_NO_CACHE)).to.be.true;
 		expect(res.set.calledWith('Surrogate-Control', FT_NO_CACHE)).to.be.true;
+	});
+
+	it('adds metadata describing the payload, internal processing of content and decisions made by the service', () => {
+
+		const res = {
+			locals: {
+				recommendations: {
+					ribbon: {
+						title: 'title',
+						titleHref: '/stream/id',
+						items: [{}, {}, {}],
+						contentSelection: 'content-selection-value'
+					}
+				},
+				flags: {
+					onwardJourneyTests: 'test-flag-value',
+					decoyFlag: true,
+				}
+			},
+			set: sinon.spy(),
+			json: sinon.spy(),
+			FT_NO_CACHE,
+			FT_HOUR_CACHE,
+		};
+
+		const expected = {
+			_metadata: {
+				flagState: {
+					onwardJourneyTests: 'test-flag-value'
+				},
+				numSlots: 1,
+				totalItems: 3,
+				contentSelection: {
+					ribbon: 'content-selection-value'
+				},
+			}
+		};
+		subject({}, res);
+		expect(res.json.getCall(0).args[0]).to.deep.include(expected);
 	});
 });
