@@ -1,10 +1,10 @@
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
-const {RIBBON_COUNT, ONWARD_COUNT, ONWARD2_COUNT} = require('../constants');
+const {Count, ContentSelection, TestVariant} = require('../constants');
 
 async function relatedContent (content, {locals: {flags = {}, slots}}) {
-	const count = Math.max(RIBBON_COUNT, ONWARD_COUNT, ONWARD2_COUNT);
+	const count = Math.max(Count.RIBBON, Count.ONWARD, Count.ONWARD2);
 	let topic;
 	let brand;
 
@@ -32,24 +32,21 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	if (topic && !brand) {
 		ribbon = topic;
 		onward = topic;
-		contentSelection.ribbon = contentSelection.onward = 'topic';
+		contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
 	} else if (!topic && brand) {
 		ribbon = brand;
 		onward = brand;
-		contentSelection.ribbon = contentSelection.onward = 'brand';
+		contentSelection.ribbon = contentSelection.onward = ContentSelection.BRAND;
 	} else if (topic && brand) {
-		if (flags.onwardJourneyTests === 'variant1') {
+		if (flags.onwardJourneyTests === TestVariant.Variant1) {
 			ribbon = brand;
 			onward = topic;
 			onward2 = brand;
-			contentSelection.ribbon = contentSelection.onward2 = 'brand';
-			contentSelection.onward = 'topic';
-		} else if (flags.onwardJourneyTests === 'variant2') {
-			ribbon = topic;
+				contentSelection.ribbon = contentSelection.onward2 = ContentSelection.BRAND;
+				contentSelection.onward = ContentSelection.TOPIC;
 			onward = brand;
 			onward2 = topic;
-			contentSelection.ribbon = contentSelection.onward2 = 'topic';
-			contentSelection.onward = 'brand';
+		} else if (flags.onwardJourneyTests === TestVariant.Variant2) {
 		}
 	}
 
@@ -90,19 +87,19 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	// Dedupe & Trim
 	if (response.ribbon) {
 		// Ribbon is not considered when deduping
-		response.ribbon.items = response.ribbon.items.slice(0, RIBBON_COUNT);
+		response.ribbon.items = response.ribbon.items.slice(0, Count.RIBBON);
 	}
 
 	if (response.onward && response.onward2) {
 		// Dedupe two adjacent components.
-		response.onward.items = response.onward.items.slice(0, ONWARD_COUNT);
+		response.onward.items = response.onward.items.slice(0, Count.ONWARD);
 		const ids = new Set(response.onward.items.map(item => item.id));
 		// Remove items from the second component. Trim after removing duplicates.
-		response.onward2.items = response.onward2.items.filter((item) => !ids.has(item.id)).slice(0, ONWARD2_COUNT);
+		response.onward2.items = response.onward2.items.filter((item) => !ids.has(item.id)).slice(0, Count.ONWARD2);
 	} else if (response.onward) {
-		response.onward.items = response.onward.items.slice(0, ONWARD_COUNT);
+		response.onward.items = response.onward.items.slice(0, Count.ONWARD);
 	} else if (response.onward2) {
-		response.onward2.items = response.onward2.items.slice(0, ONWARD2_COUNT);
+		response.onward2.items = response.onward2.items.slice(0, Count.ONWARD2);
 	}
 
 	return response;

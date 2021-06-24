@@ -1,5 +1,24 @@
+const BOTTOM_ROW_SIZE = 4;
+
+const Count = {
+	RIBBON: 4,
+	ONWARD:  BOTTOM_ROW_SIZE * 2,
+	ONWARD2: BOTTOM_ROW_SIZE * 1,
+};
+
+const ContentSelection = {
+	TOPIC: 'topic',
+	BRAND: 'brand',
+};
+
+const TestVariant = {
+	Variant1: 'variant1',
+	Variant2: 'variant2',
+};
+
 module.exports = {
-	RIBBON_COUNT: 4,
-	ONWARD_COUNT: 8,
-	ONWARD2_COUNT: 4,
+	Count,
+	ContentSelection,
+	TestVariant,
+	BOTTOM_ROW_SIZE,
 };
