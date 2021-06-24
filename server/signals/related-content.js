@@ -2,6 +2,7 @@ const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
 const {Count, ContentSelection, TestVariant} = require('../constants');
+const { canShowBottomSlotOnPage, canShowRibbonOnPage } = require('../lib/can-show-on-page');
 
 async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	const count = Math.max(Count.RIBBON, Count.ONWARD, Count.ONWARD2);
@@ -10,6 +11,15 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 
 	const relatedConcepts = getMostRelatedConcepts(content) || [];
 	const topicConcept = relatedConcepts[0];
+
+	if (!canShowRibbonOnPage(content)) {
+		slots.ribbon = false;
+	}
+
+	if (!canShowBottomSlotOnPage(content)) {
+		slots.onward = false;
+		slots.onward2 = false;
+	}
 
 	if (topicConcept) {
 		topic = getRelatedContent(topicConcept, count, content.id);
@@ -84,7 +94,15 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		delete response.onward2;
 	}
 
-	// Dedupe & Trim
+	if (!canShowRibbonOnPage(content)) {
+		delete response.ribbon;
+	}
+
+	if (!canShowBottomSlotOnPage(content)) {
+		delete response.onward;
+		delete response.onward2;
+	}
+
 	if (response.ribbon) {
 		// Ribbon is not considered when deduping
 		response.ribbon.items = response.ribbon.items.slice(0, Count.RIBBON);

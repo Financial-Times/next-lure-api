@@ -158,6 +158,32 @@ describe('related-content signal', () => {
 			const promise = subject(content, {locals: {slots}});
 			return expect(promise).to.eventually.eql({});
 		});
+
+		it('don\'t show if there is a topper on the content', () => {
+			const concept = annotation(0, ConceptType.Topic, Predicate.about);
+			const content = { id: 'parent-id', annotations: [concept], topper: { layout: 'full-bleed-offset' } };
+			const slots = {ribbon: true};
+			getMostRelatedConcepts.returns([concept]);
+			getRelatedContent.resolves({
+				concept,
+				items: [{id: 1}, {id: 2}]
+			});
+			const promise = subject(content, {locals: {slots}});
+			return expect(promise).to.eventually.eql({});
+		});
+
+		it('don\'t show if the article is contained in Content Package', () => {
+			const concept = annotation(0, ConceptType.Topic, Predicate.about);
+			const content = { id: 'content-id', annotations: [concept], containedIn: [{id: 'package-id'}] };
+			const slots = {ribbon: true};
+			getMostRelatedConcepts.returns([concept]);
+			getRelatedContent.resolves({
+				concept,
+				items: [{id: 1}, {id: 2}]
+			});
+			const promise = subject(content, {locals: {slots}});
+			return expect(promise).to.eventually.eql({});
+		});
 	});
 
 	context('onward2 slot', () => {
@@ -243,6 +269,34 @@ describe('related-content signal', () => {
 				expect(result.onward2.items.map(obj => obj.id)).to.eql([ 101, 102, 103, 104 ]);
 				expect(result.ribbon.items.map(obj => obj.id)).to.eql([ 101, 102, 103, 104 ]);
 				expect(result.onward.items.map(obj => obj.id)).to.eql([ 1, 2, 3, 4, 5, 6]);
+			});
+		});
+
+		it('doesn\'t show the bottom slots (onward and onward2) if there article is inside a ContentPackage', () => {
+			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
+			const topic = annotation(1, ConceptType.Topic, Predicate.about);
+			const content = { id: 'parent-id', annotations: [brand, topic], containedIn: [{id: 'package-id'}] };
+			const slots = {onward: true, onward2: true, ribbon: false};
+			const flags = {onwardJourneyTests: 'variant1'};
+
+			getMostRelatedConcepts.returns([topic]);
+			getBrandConcept.returns(brand);
+
+			getRelatedContent.onCall(0).resolves({
+				concept: topic,
+				items: [{ id: 1 }]
+			});
+
+			getRelatedContent.onCall(1).resolves({
+				concept: brand,
+				items: [{ id: 101 }]
+			});
+
+			const promise = subject(content, {locals: {slots, flags}});
+			return promise.then(result => {
+				expect(result).to.not.include.keys('onward');
+				expect(result).to.not.include.keys('onward2');
+				expect(result).to.not.include.keys('ribbon');
 			});
 		});
 
