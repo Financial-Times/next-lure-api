@@ -221,6 +221,8 @@ describe('related-content signal', () => {
 		it('doesn\`t return onward2 slot if there are no results', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
+			const brandItems = [];
+			const topicItems = [{ id: 1 }];
 			const content = { id: 'parent-id' };
 			const slots = {onward2: true, onward: false};
 			const flags = {onwardJourneyTests: 'variant1'};
@@ -228,12 +230,12 @@ describe('related-content signal', () => {
 			getMostRelatedConcepts.returns([topic]);
 			getBrandConcept.returns(brand);
 
-			getRelatedContent.resolves({
-				concept: topic,
-				items: [{ id: 1 }]
-			});
+			getRelatedContent.onCall(0).resolves(brandItems);
 
-			getRelatedContent.onCall(1).resolves([]);
+			getRelatedContent.onCall(1).resolves({
+				concept: topic,
+				items: topicItems,
+			});
 
 			const promise = subject(content, {locals: {slots, flags}});
 			return promise.then(result => {
@@ -303,6 +305,8 @@ describe('related-content signal', () => {
 		it('returns correct stories in slot (Variant: onwardJourneyTests=variant2)', () => {
 			const brand = annotation(0, ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation(1, ConceptType.Topic, Predicate.about);
+			const topicItems = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, {id: 6}];
+			const brandItems = [{ id: 101}, { id: 102 }, { id: 103 }, { id: 104 }, { id: 105 }, {id: 106}];
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
 			const flags = {onwardJourneyTests: 'variant2'};
@@ -312,17 +316,22 @@ describe('related-content signal', () => {
 
 			getRelatedContent.onCall(0).resolves({
 				concept: topic,
-				items: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, {id: 6}]
+				items: topicItems,
 			});
 
 			getRelatedContent.onCall(1).resolves({
 				concept: brand,
-				items: [{ id: 101}, { id: 102 }, { id: 103 }, { id: 104 }, { id: 105 }, {id: 106}]
+				items: brandItems,
 			});
+
+			const id = obj => obj.id;
 
 			const promise = subject(content, {locals: {slots, flags}});
 			return promise.then(result => {
+				expect(result.onward.items.map(id)).to.eql(topicItems.map(id));
 				expect(result.onward2.items.length).to.equal(Count.ONWARD2);
+				expect(result.onward2.items.map(id)).to.eql([ 101, 102, 103, 104, ]);
+				expect(result.ribbon.items.map(id)).to.eql([ 1, 2, 3, 4, ]);
 			});
 		});
 
@@ -383,6 +392,8 @@ describe('related-content signal', () => {
 		it('removes duplicate content when branded content in onward2 slot', () => {
 			const brand = annotation('brand-id', ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
+			const topicItems = [{ id: 'duplicate' }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }];
+			const brandItems = [{ id: 'duplicate'}, { id: 102 }, { id: 103 }, { id: 104 }, { id: 105 }, { id: 106 }];
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
 			const flags = {onwardJourneyTests: 'variant1'};
@@ -392,23 +403,30 @@ describe('related-content signal', () => {
 
 			getRelatedContent.onCall(0).resolves({
 				concept: topic,
-				items: [{ id: 1 }, { id: 2 }, { id: 'duplicate' }, { id: 4 }, { id: 5 }, { id: 6 }]
+				items: topicItems,
 			});
 
 			getRelatedContent.onCall(1).resolves({
 				concept: brand,
-				items: [{ id: 'duplicate'}, { id: 102 }, { id: 103 }, { id: 104 }, { id: 105 }, { id: 106 }]
+				items: brandItems,
 			});
+
+			const id = obj => obj.id;
 
 			const promise = subject(content, {locals: {slots, flags}});
 			return promise.then(result => {
+				expect(result.ribbon.items.map(id)).to.eql([ 'duplicate', 102, 103, 104 ], 'Duplicates should not be removed from the ribbon slot');
+				expect(result.onward.items.map(id)).to.eql([ 'duplicate', 2, 3, 4, 5, 6], 'Duplicates should not be removed from the onward slot');
 				expect(result.onward2.items.length).to.equal(Count.ONWARD2, 'onward2 slot should have the correct number of items after duplicates are removed');
+				expect(result.onward2.items.map(id)).to.eql([ 102, 103, 104, 105 ], 'Duplicates should be removed from the onward2 slot');
 			});
 		});
 
 		it('removes duplicate content when topic content in onward2 slot', () => {
 			const brand = annotation('brand-id', ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
+			const brandItems = [{ id: 1 }, { id: 2 }, { id: 'duplicate' }, { id: 4 }, { id: 5 }, { id: 6 }];
+			const topicItems = [{ id: 'duplicate'}, { id: 102 }, { id: 103 }, { id: 104 }, { id: 105 }, { id: 106 }];
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
 			const flags = {onwardJourneyTests: 'variant2'};
@@ -418,23 +436,37 @@ describe('related-content signal', () => {
 
 			getRelatedContent.onCall(0).resolves({
 				concept: topic,
-				items: [{ id: 1 }, { id: 2 }, { id: 'duplicate' }, { id: 4 }, { id: 5 }, { id: 6 }]
+				items: topicItems
 			});
 
 			getRelatedContent.onCall(1).resolves({
 				concept: brand,
-				items: [{ id: 'duplicate'}, { id: 102 }, { id: 103 }, { id: 104 }, { id: 105 }, { id: 106 }]
+				items: brandItems,
 			});
+
+			const id = obj => obj.id;
 
 			const promise = subject(content, {locals: {slots, flags}});
 			return promise.then(result => {
+				expect(result.ribbon.items.map(id)).to.eql(['duplicate', 102, 103, 104], 'Duplicates should not be removed from the ribbon slot');
+				expect(result.onward.items.map(id)).to.eql(['duplicate', 102, 103, 104, 105, 106], 'Duplicates should not be removed from the onward slot');
 				expect(result.onward2.items.length).to.equal(Count.ONWARD2, 'onward2 slot should have the correct number of items after duplicates are removed');
+				expect(result.onward2.items.map(id)).to.eql([ 1, 2, 4, 5 ], 'Duplicates should not be removed from the onward2 slot');
 			});
 		});
 
 		it('does not unnecessarily remove duplicate content (Variant: onwardJourneyTests=variant2)', () => {
 			const brand = annotation('brand-id', ConceptType.Brand, Predicate.isClassifiedBy);
 			const topic = annotation('topic-id', ConceptType.Topic, Predicate.about);
+			const brandItems = [
+				{ id: 'duplicate' }, { id: 2 }, { id: 3 }, { id: 4 },
+				{ id: 5 }, { id: 6 }, { id: 7 }, { id: 8 }, { id: 9}
+			];
+			const topicItems = [
+				{ id: 101}, { id: 102 }, { id: 103 }, { id: 104 },
+				{ id: 105 }, { id: 106 }, { id: 107 }, { id: 108 }, { id: 'duplicate' },
+				{ id: 110 }, { id: 111}, { id: 112}, { id: 113}
+			];
 			const content = { id: 'parent-id', annotations: [brand, topic] };
 			const slots = {onward: true, onward2: true, ribbon: true};
 			const flags = {onwardJourneyTests: 'variant2'};
@@ -444,29 +476,22 @@ describe('related-content signal', () => {
 
 			getRelatedContent.onCall(0).resolves({
 				concept: topic,
-				items: [
-					{ id: 'duplicate' }, { id: 2 }, { id: 3 }, { id: 4 },
-					{ id: 5 }, { id: 6 }, { id: 7 }, { id: 8 }, { id: 9}
-				]
+				items: topicItems,
 			});
 
 			getRelatedContent.onCall(1).resolves({
 				concept: brand,
-				items: [
-					{ id: 101}, { id: 102 }, { id: 103 }, { id: 104 },
-					{ id: 105 }, { id: 106 }, { id: 107 }, { id: 108 }, { id: 'duplicate' }
-				]
+				items: brandItems,
 			});
+
+			const id = obj => obj.id;
 
 			const promise = subject(content, {locals: {slots, flags}});
 			return promise.then(result => {
-				// duplicates are not removed from the ribbon
-				expect(result.ribbon.items.map(obj => obj.id)).to.eql([ 'duplicate', 2, 3, 4 ], 'Duplicates should not be removed from the ribbon slot');
-				expect(result.onward.items.map(obj => obj.id)).to.eql([101, 102, 103, 104, 105, 106, 107, 108], 'Duplicates should not be removed from the onward slot');
-				// duplicates are not removed from onward 2
-				expect(result.onward2.items.map(obj => obj.id)).to.eql([ 'duplicate', 2, 3, 4 ],
-					'Nothing is removed from the onward2 slot because the index of the duplicate in the onward slot greater than the max number of items'
-				);
+				expect(result.ribbon.items.map(id)).to.eql([ 101, 102, 103, 104 ], 'Duplicates should not be removed from the ribbon slot');
+				expect(result.onward.items.map(id)).to.eql([101, 102, 103, 104, 105, 106, 107, 108, 'duplicate', 110, 111, 112], 'Duplicates should not be removed from the onward slot');
+				expect(result.onward.items.length).to.equal(12, 'Onward slot is trimmed to the correct length');
+				expect(result.onward2.items.map(id)).to.eql([ 2, 3, 4, 5 ], 'Duplicates are removed from the onward2 slot');
 			});
 		});
 
@@ -496,13 +521,15 @@ describe('related-content signal', () => {
 				]
 			});
 
+			const id = obj => obj.id;
+
 			const promise = subject(content, {locals: {slots, flags}});
 			return promise.then(result => {
 				// duplicates are not removed from the ribbon
-				expect(result.ribbon.items.map(obj => obj.id)).to.eql(['duplicate', 102, 103, 104], 'Duplicates should not be removed from the ribbon slot');
-				expect(result.onward.items.map(obj => obj.id)).to.eql([1, 2, 3, 4, 5, 6, 7, 8], 'Duplicates should not be removed from the onward slot');
+				expect(result.ribbon.items.map(id)).to.eql(['duplicate', 102, 103, 104], 'Duplicates should not be removed from the ribbon slot');
+				expect(result.onward.items.map(id)).to.eql([1, 2, 3, 4, 5, 6, 7, 8], 'Duplicates should not be removed from the onward slot');
 				// duplicates are not removed from onward 2
-				expect(result.onward2.items.map(obj => obj.id)).to.eql(['duplicate', 102, 103, 104],
+				expect(result.onward2.items.map(id)).to.eql(['duplicate', 102, 103, 104],
 					'Nothing is removed from the onward2 slot because the index of the duplicate in the onward slot greater than the max number of items'
 				);
 			});
