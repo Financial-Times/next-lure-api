@@ -3,6 +3,7 @@ const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
 const {Count, ContentSelection, TestVariant} = require('../constants');
 const { canShowBottomSlotOnPage, canShowRibbonOnPage } = require('../lib/can-show-on-page');
+const dedupe = require('../lib/dedupe');
 
 async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	const count = Math.max(Count.RIBBON, Count.ONWARD, Count.ONWARD2);
@@ -103,6 +104,8 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		delete response.onward2;
 	}
 
+	// Dedupe & trim each list...
+
 	if (response.ribbon) {
 		// Ribbon is not considered when deduping
 		response.ribbon.items = response.ribbon.items.slice(0, Count.RIBBON);
@@ -110,10 +113,14 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 
 	if (response.onward && response.onward2) {
 		// Dedupe two adjacent components.
-		response.onward.items = response.onward.items.slice(0, Count.ONWARD);
-		const ids = new Set(response.onward.items.map(item => item.id));
-		// Remove items from the second component. Trim after removing duplicates.
-		response.onward2.items = response.onward2.items.filter((item) => !ids.has(item.id)).slice(0, Count.ONWARD2);
+		const [a, b] = dedupe.simple(
+			item => item.id,
+			response.onward.items.slice(0, Count.ONWARD), // Trim BEFORE deduping
+			response.onward2.items,
+		);
+		response.onward2.items = a;
+		// Trim AFTER removing duplicates.
+		response.onward2.items = b.slice(0, Count.ONWARD2);
 	} else if (response.onward) {
 		response.onward.items = response.onward.items.slice(0, Count.ONWARD);
 	} else if (response.onward2) {
