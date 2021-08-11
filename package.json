@@ -26,14 +26,14 @@
   "dependencies": {
     "@financial-times/n-concept-ids": "1.16.0",
     "@financial-times/n-es-client": "3.0.0",
-    "@financial-times/n-express": "21.0.13",
+    "@financial-times/n-express": "22.1.1",
     "@financial-times/n-logger": "8.0.1",
     "cookie-parser": "^1.4.3",
     "express-async-errors": "^3.1.1",
     "fetchres": "1.7.2",
     "ft-poller": "^3.0.1",
     "http-errors": "^1.8.0",
-    "n-health": "5.0.1"
+    "n-health": "5.0.3"
   },
   "devDependencies": {
     "@financial-times/n-gage": "^3.12.0",
