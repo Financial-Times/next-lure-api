@@ -1,15 +1,26 @@
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
-const {RIBBON_COUNT, ONWARD_COUNT, ONWARD2_COUNT} = require('../constants');
+const {Count, ContentSelection, TestVariant} = require('../constants');
+const { canShowBottomSlotOnPage, canShowRibbonOnPage } = require('../lib/can-show-on-page');
+const dedupe = require('../lib/dedupe');
 
 async function relatedContent (content, {locals: {flags = {}, slots}}) {
-	const count = Math.max(RIBBON_COUNT, ONWARD_COUNT, ONWARD2_COUNT);
+	const count = Math.max(Count.RIBBON, Count.ONWARD, Count.ONWARD2);
 	let topic;
 	let brand;
 
 	const relatedConcepts = getMostRelatedConcepts(content) || [];
 	const topicConcept = relatedConcepts[0];
+
+	if (!canShowRibbonOnPage(content)) {
+		slots.ribbon = false;
+	}
+
+	if (!canShowBottomSlotOnPage(content)) {
+		slots.onward = false;
+		slots.onward2 = false;
+	}
 
 	if (topicConcept) {
 		topic = getRelatedContent(topicConcept, count, content.id);
@@ -27,22 +38,36 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	let ribbon;
 	let onward;
 	let onward2;
+	let contentSelection = {};
 
 	if (topic && !brand) {
 		ribbon = topic;
 		onward = topic;
+		contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
 	} else if (!topic && brand) {
 		ribbon = brand;
 		onward = brand;
+		contentSelection.ribbon = contentSelection.onward = ContentSelection.BRAND;
 	} else if (topic && brand) {
-		if (flags.onwardJourneyTests === 'variant1') {
-			ribbon = brand;
+		if (flags.onwardJourneyTests === TestVariant.Variant1) {
+			if (slots.ribbon) {
+				ribbon = brand;
+				onward = topic;
+				onward2 = brand;
+				contentSelection.ribbon = contentSelection.onward2 = ContentSelection.BRAND;
+				contentSelection.onward = ContentSelection.TOPIC;
+			} else {
+				onward = brand;
+				onward2 = topic;
+				contentSelection.onward = ContentSelection.BRAND;
+				contentSelection.onward2 = ContentSelection.TOPIC;
+			}
+		} else if (flags.onwardJourneyTests === TestVariant.Variant2) {
+			ribbon = topic;
 			onward = topic;
 			onward2 = brand;
-		} else if (flags.onwardJourneyTests === 'variant2') {
-			ribbon = topic;
-			onward = brand;
-			onward2 = topic;
+			contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
+			contentSelection.onward2 = ContentSelection.BRAND;
 		}
 	}
 
@@ -62,6 +87,7 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 			concept: {
 				...data.concept,
 			},
+			contentSelection: contentSelection[name],
 			items: data.items.slice(0),
 		};
 	}
@@ -79,22 +105,58 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		delete response.onward2;
 	}
 
-	// Dedupe & Trim
+	if (!canShowRibbonOnPage(content)) {
+		delete response.ribbon;
+	}
+
+	if (!canShowBottomSlotOnPage(content)) {
+		delete response.onward;
+		delete response.onward2;
+	}
+
+	// Dedupe & trim each list...
+
 	if (response.ribbon) {
 		// Ribbon is not considered when deduping
-		response.ribbon.items = response.ribbon.items.slice(0, RIBBON_COUNT);
+		response.ribbon.items = response.ribbon.items.slice(0, Count.RIBBON);
 	}
 
 	if (response.onward && response.onward2) {
-		// Dedupe two adjacent components.
-		response.onward.items = response.onward.items.slice(0, ONWARD_COUNT);
-		const ids = new Set(response.onward.items.map(item => item.id));
-		// Remove items from the second component. Trim after removing duplicates.
-		response.onward2.items = response.onward2.items.filter((item) => !ids.has(item.id)).slice(0, ONWARD2_COUNT);
+		if (flags.onwardJourneyTests === TestVariant.Variant2) {
+			// Dedupe strategy:
+			// Simply remove elements from the second list (onward2)
+			// if they appear in the first list (onward).
+			// We don't use the advaned strategy which may, in some cases, remove
+			// elements from the first list if they appear in a more favourable position
+			// in the seond list. This is because the current test onward2
+			const [a, b] = dedupe.simple(
+				item => item.id,
+				response.onward.items.slice(0, Count.ONWARD + 4 /* +4 to add an extra row of results */),
+				response.onward2.items
+			);
+			response.onward.items = a;
+			//Trim onward2 AFTER removing duplicates.
+			response.onward2.items = b.slice(0, Count.ONWARD2);
+		} else {
+			const frameSize = 4;
+			// Dedupe strategy:
+			// Remove duplicate elements from either list depending where they appear in the list.
+			// eg If a duplicate item's index in A=5 and B=0, then remove it from list A.
+			// This is to avoid favouring a duplicate that is unlikely to be displayed on the front-end
+			const [a, b] = dedupe.advanced(
+				item => item.id,
+				response.onward.items.slice(0, Count.ONWARD),
+				response.onward2.items,
+				frameSize,
+			);
+			response.onward.items = a;
+			//Trim onward2 AFTER removing duplicates.
+			response.onward2.items = b.slice(0, Count.ONWARD2);
+		}
 	} else if (response.onward) {
-		response.onward.items = response.onward.items.slice(0, ONWARD_COUNT);
+		response.onward.items = response.onward.items.slice(0, Count.ONWARD);
 	} else if (response.onward2) {
-		response.onward2.items = response.onward2.items.slice(0, ONWARD2_COUNT);
+		response.onward2.items = response.onward2.items.slice(0, Count.ONWARD2);
 	}
 
 	return response;

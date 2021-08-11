@@ -11,6 +11,8 @@ module.exports = async (req, res, next) => {
 					'annotations',
 					'displayConcept',
 					'publishedDate',
+					'topper',
+					'containedIn',
 				],
 			},
 			500

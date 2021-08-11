@@ -9,8 +9,7 @@
 ## Architecture
 
 - heroku in 2 regions
-- fronted by fastly instance, lure-api.ft.com, generally only used for non-personalised, server <-> server communication
-- in addition, served directly on www.ft.com/lure for personalised responses
+- served directly on www.ft.com/lure for personalised responses
 
 ## Contract
 
