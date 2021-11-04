@@ -17,6 +17,10 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		slots.ribbon = false;
 	}
 
+	if (flags.hideTopRibbon) {
+		slots.ribbon = false;
+	}
+
 	if (!canShowBottomSlotOnPage(content)) {
 		slots.onward = false;
 		slots.onward2 = false;
