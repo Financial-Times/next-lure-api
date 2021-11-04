@@ -68,6 +68,10 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 			onward2 = brand;
 			contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
 			contentSelection.onward2 = ContentSelection.BRAND;
+		} else {
+			ribbon = topic;
+			onward = topic;
+			contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
 		}
 	}
 
