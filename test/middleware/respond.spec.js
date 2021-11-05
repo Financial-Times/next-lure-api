@@ -95,7 +95,8 @@ describe('respond middleware', () => {
 		const expected = {
 			_metadata: {
 				flagState: {
-					onwardJourneyTests: 'test-flag-value'
+					onwardJourneyTests: 'test-flag-value',
+					hideTopRibbon: false,
 				},
 				numSlots: 1,
 				totalItems: 3,

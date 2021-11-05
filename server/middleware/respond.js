@@ -51,7 +51,7 @@ module.exports = (_, res) => {
 	response._metadata = {
 		flagState: {
 			onwardJourneyTests: flags.onwardJourneyTests || 'control',
-			hideTopRibbon: flags.hideTopRibbon,
+			hideTopRibbon: Boolean(flags.hideTopRibbon),
 		},
 		numSlots,
 		totalItems,
