@@ -2,6 +2,8 @@
 
 const esClient = require('@financial-times/n-es-client');
 
+const region = process.env.REGION === 'US' ? 'us' : 'eu';
+
 const INTERVAL = 60 * 1000;
 
 const statuses = {
@@ -18,7 +20,8 @@ function pingServices () {
 function elasticStatus () {
 	return {
 		getStatus: () => ({
-			name: 'elasticsearch responded successfully.',
+			id: `elasticsearch-${region}-success`,
+			name: `elasticsearch responded successfully in ${region}`,
 			ok: statuses.elastic,
 			businessImpact: 'Users may not see related content recommendations.',
 			severity: 1,
