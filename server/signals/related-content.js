@@ -1,7 +1,7 @@
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
-const {Count, ContentSelection, TestVariant} = require('../constants');
+const { Count, ContentSelection, TestVariant } = require('../constants');
 const { canShowBottomSlotOnPage, canShowRibbonOnPage } = require('../lib/can-show-on-page');
 const dedupe = require('../lib/dedupe');
 
