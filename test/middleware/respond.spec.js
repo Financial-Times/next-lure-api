@@ -74,7 +74,7 @@ describe('respond middleware', () => {
 		const res = {
 			locals: {
 				recommendations: {
-					ribbon: {
+					onward: {
 						title: 'title',
 						titleHref: '/stream/id',
 						items: [{}, {}, {}],
@@ -96,12 +96,11 @@ describe('respond middleware', () => {
 			_metadata: {
 				flagState: {
 					onwardJourneyTests: 'test-flag-value',
-					hideTopRibbon: false,
 				},
 				numSlots: 1,
 				totalItems: 3,
 				contentSelection: {
-					ribbon: 'content-selection-value'
+					onward: 'content-selection-value'
 				},
 			}
 		};

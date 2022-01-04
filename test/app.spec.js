@@ -42,7 +42,7 @@ describe('lure e2e', () => {
 
 	context('success', () => {
 
-		before(() => rawData = {ribbon: {}});
+		before(() => rawData = {onward:{}});
 
 		it('sets appropriate cache headers', async () => {
 			return request(app)
@@ -53,14 +53,6 @@ describe('lure e2e', () => {
 
 		it('converts concepts to headings and links', () => {
 			rawData = {
-				ribbon: {
-					items: getItems(5),
-					concept: {
-						prefLabel: 'Stuff',
-						preposition: 'examplePrepos',
-						relativeUrl: '/exampleLink'
-					}
-				},
 				onward2: {
 					items: getItems(5),
 					concept: {
@@ -74,8 +66,6 @@ describe('lure e2e', () => {
 			return request(app)
 				.get('/lure/v2/content/uuid')
 				.then(({body}) => {
-					expect(body.ribbon.title).to.equal('Latest examplePrepos Stuff');
-					expect(body.ribbon.titleHref).to.equal('/exampleLink');
 					expect(body.onward2.title).to.equal('More examplePrepos Stuff');
 					expect(body.onward2.titleHref).to.equal('/exampleLink');
 				});
@@ -84,9 +74,6 @@ describe('lure e2e', () => {
 		context('when fetching v2 style data', () => {
 			before(() => {
 				rawData = {
-					ribbon: {
-						items: getItems(4)
-					},
 					onward: {
 						items: getItems(7),
 					}
@@ -97,7 +84,6 @@ describe('lure e2e', () => {
 				return request(app)
 					.get('/lure/v2/content/uuid')
 					.then(({body}) => {
-						expect(body.ribbon.items.length).to.equal(4);
 						expect(Array.isArray(body.onward)).to.be.false;
 						expect(body.onward.items.length).to.equal(7);
 						expect(uniqueIds('items', [body.onward])).to.be.true;

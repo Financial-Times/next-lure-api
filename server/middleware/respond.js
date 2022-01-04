@@ -31,10 +31,6 @@ module.exports = (_, res) => {
 	const { recommendations, flags = {} } = res.locals;
 	const response = {};
 
-	if (recommendations.ribbon) {
-		response.ribbon = finishModel(recommendations.ribbon, 'Latest');
-	}
-
 	if (recommendations.onward) {
 		response.onward = finishModel(recommendations.onward, 'Latest');
 	}
@@ -51,7 +47,6 @@ module.exports = (_, res) => {
 	response._metadata = {
 		flagState: {
 			onwardJourneyTests: flags.onwardJourneyTests || 'control',
-			hideTopRibbon: Boolean(flags.hideTopRibbon),
 		},
 		numSlots,
 		totalItems,
@@ -70,7 +65,6 @@ module.exports = (_, res) => {
 	res.json(response);
 
 	metrics.count(`flags.onwardJourneyTests.${flags.onwardJourneyTests || 'control'}`);
-	metrics.count(`slots.ribbon.${Boolean(response.ribbon)}`);
 	metrics.count(`slots.onward.${Boolean(response.onward)}`);
 	metrics.count(`slots.onward2.${Boolean(response.onward2)}`);
 };

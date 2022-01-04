@@ -1,7 +1,6 @@
 const BOTTOM_ROW_SIZE = 4;
 
 const Count = {
-	RIBBON: 4,
 	ONWARD:  BOTTOM_ROW_SIZE * 2,
 	ONWARD2: BOTTOM_ROW_SIZE * 1,
 };
