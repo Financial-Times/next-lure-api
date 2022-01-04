@@ -27,7 +27,7 @@ module.exports.priorityList = new Map([
 	// Weighted Down:
 	// The Special Reports brand has many sub-brands. When one of the sub-brands
 	// is in use we'd favour it over the broader/generic Special Reports brand
-	[conceptIds.brand.specialReport, -1],
+	[conceptIds.brand.specialReport, Priority.NEGATIVE],
 ]);
 
 // A list of non-brand concepts (mainly genres) that a user might
