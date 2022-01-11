@@ -1,25 +1,17 @@
 const getMostRelatedConcepts = require('../lib/get-most-related-concepts');
 const getBrandConcept = require('../lib/get-brand-concept');
 const getRelatedContent = require('../lib/get-related-content');
-const {Count, ContentSelection, TestVariant} = require('../constants');
-const { canShowBottomSlotOnPage, canShowRibbonOnPage } = require('../lib/can-show-on-page');
+const { Count, ContentSelection, TestVariant } = require('../constants');
+const { canShowBottomSlotOnPage } = require('../lib/can-show-on-page');
 const dedupe = require('../lib/dedupe');
 
 async function relatedContent (content, {locals: {flags = {}, slots}}) {
-	const count = Math.max(Count.RIBBON, Count.ONWARD, Count.ONWARD2);
+	const count = Math.max(Count.ONWARD, Count.ONWARD2);
 	let topic;
 	let brand;
 
 	const relatedConcepts = getMostRelatedConcepts(content) || [];
 	const topicConcept = relatedConcepts[0];
-
-	if (!canShowRibbonOnPage(content)) {
-		slots.ribbon = false;
-	}
-
-	if (flags.hideTopRibbon) {
-		slots.ribbon = false;
-	}
 
 	if (!canShowBottomSlotOnPage(content)) {
 		slots.onward = false;
@@ -39,43 +31,30 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		}
 	}
 
-	let ribbon;
 	let onward;
 	let onward2;
 	let contentSelection = {};
 
 	if (topic && !brand) {
-		ribbon = topic;
 		onward = topic;
-		contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
+		contentSelection.onward = ContentSelection.TOPIC;
 	} else if (!topic && brand) {
-		ribbon = brand;
 		onward = brand;
-		contentSelection.ribbon = contentSelection.onward = ContentSelection.BRAND;
+		contentSelection.onward = ContentSelection.BRAND;
 	} else if (topic && brand) {
 		if (flags.onwardJourneyTests === TestVariant.Variant1) {
-			if (slots.ribbon) {
-				ribbon = brand;
-				onward = topic;
-				onward2 = brand;
-				contentSelection.ribbon = contentSelection.onward2 = ContentSelection.BRAND;
-				contentSelection.onward = ContentSelection.TOPIC;
-			} else {
-				onward = brand;
-				onward2 = topic;
-				contentSelection.onward = ContentSelection.BRAND;
-				contentSelection.onward2 = ContentSelection.TOPIC;
-			}
+			onward = brand;
+			onward2 = topic;
+			contentSelection.onward = ContentSelection.BRAND;
+			contentSelection.onward2 = ContentSelection.TOPIC;
 		} else if (flags.onwardJourneyTests === TestVariant.Variant2) {
-			ribbon = topic;
 			onward = topic;
 			onward2 = brand;
-			contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
+			contentSelection.onward = ContentSelection.TOPIC;
 			contentSelection.onward2 = ContentSelection.BRAND;
 		} else {
-			ribbon = topic;
 			onward = topic;
-			contentSelection.ribbon = contentSelection.onward = ContentSelection.TOPIC;
+			contentSelection.onward = ContentSelection.TOPIC;
 		}
 	}
 
@@ -101,7 +80,6 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 	}
 
 	await Promise.all([
-		slot('ribbon', ribbon),
 		slot('onward', onward),
 		slot('onward2', onward2),
 	]);
@@ -113,22 +91,12 @@ async function relatedContent (content, {locals: {flags = {}, slots}}) {
 		delete response.onward2;
 	}
 
-	if (!canShowRibbonOnPage(content)) {
-		delete response.ribbon;
-	}
-
 	if (!canShowBottomSlotOnPage(content)) {
 		delete response.onward;
 		delete response.onward2;
 	}
 
 	// Dedupe & trim each list...
-
-	if (response.ribbon) {
-		// Ribbon is not considered when deduping
-		response.ribbon.items = response.ribbon.items.slice(0, Count.RIBBON);
-	}
-
 	if (response.onward && response.onward2) {
 		if (flags.onwardJourneyTests === TestVariant.Variant2) {
 			// Dedupe strategy:
