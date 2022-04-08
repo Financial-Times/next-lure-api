@@ -2,5 +2,4 @@
 *.env*
 .editorconfig
 .eslintrc.js
-package-lock.json
 /public

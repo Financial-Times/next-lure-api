@@ -17,7 +17,7 @@
     "url": "https://github.com/Financial-Times/next-lure-api/issues"
   },
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "homepage": "https://github.com/Financial-Times/next-lure-api#readme",
   "dependencies": {
@@ -57,5 +57,8 @@
       "pre-commit": "node_modules/.bin/secret-squirrel",
       "pre-push": "make verify -j3"
     }
+  },
+  "volta": {
+    "node": "16.14.2"
   }
 }
