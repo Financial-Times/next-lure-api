@@ -28,7 +28,7 @@
     "cookie-parser": "^1.4.3",
     "express-async-errors": "^3.1.1",
     "fetchres": "1.7.2",
-    "ft-poller": "^5.0.0",
+    "ft-poller": "^6.0.0",
     "http-errors": "^1.8.0",
     "n-health": "5.0.5"
   },
