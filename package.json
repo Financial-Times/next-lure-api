@@ -30,7 +30,7 @@
     "fetchres": "1.7.2",
     "ft-poller": "^5.0.0",
     "http-errors": "^1.8.0",
-    "n-health": "5.0.5"
+    "n-health": "5.0.6"
   },
   "devDependencies": {
     "@financial-times/n-gage": "^9.0.1",
