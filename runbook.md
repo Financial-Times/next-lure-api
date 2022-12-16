@@ -111,4 +111,4 @@ Details of any monitoring this system has.
 
 ## Second Line Troubleshooting
 
-*   check splunk `index=heroku search="*lure-api*"`
+*   check splunk `index=heroku source="next-lure-api" sourcetype="heroku:app"`
