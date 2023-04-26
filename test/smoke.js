@@ -14,5 +14,6 @@ module.exports = [{
 	},
 	headers: {
 		'ft-flags': 'lureTopStories',
+		'X-API-KEY': process.env.LURE_API_READ_ONLY_KEY
 	}
 }];
