@@ -34,6 +34,8 @@ v2.use(errorHandler);
 lure.use('/v2', v2);
 app.use('/lure', lure);
 
+app.use('/__lure', middleware.apiKeyAuth, lure);
+
 app.use(function logError (error, req, res, next) { // eslint-disable-line no-unused-vars
 	const status = error.statusCode || error.status;
 	if (status !== 404) {

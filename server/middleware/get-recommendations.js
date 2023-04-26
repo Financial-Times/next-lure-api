@@ -4,7 +4,7 @@ const relatedContent = require('../signals/related-content');
 
 module.exports = async (req, res, next) => {
 	try {
-		res.locals.recommendations = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });;
+		res.locals.recommendations = await relatedContent(res.locals.content, { locals: Object.assign({}, res.locals) });
 		next();
 	} catch (err) {
 		logger.error({event: 'RECOMMENDATION_FAILURE', contentId: req.params.contentId}, err);
