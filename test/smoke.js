@@ -1,4 +1,5 @@
 require('dotenv').config();
+const apiKey = { 'X-API-KEY': process.env.BLABLA }
 
 module.exports = [{
 	urls: {
@@ -6,7 +7,7 @@ module.exports = [{
 		'/__lure/v2/content/a31c3c62-b936-11e7-8c12-5661783e5589': 200
 	},
 	headers: {
-		'X-API-KEY': process.env.LURE_API_READ_ONLY_KEY
+		'X-API-KEY': apiKey
 	}
 }, {
 	urls: {
@@ -19,7 +20,7 @@ module.exports = [{
 	},
 	headers: {
 		'ft-flags': 'lureTopStories',
-		'X-API-KEY': process.env.LURE_API_READ_ONLY_KEY
+		'X-API-KEY': apiKey
 	},
 }, {
 	urls: {
