@@ -1,5 +1,5 @@
 require('dotenv').config();
-const apiKey = { 'X-API-KEY': process.env.LURE_API_READ_ONLY_KEY };
+const apiKey = process.env.LURE_API_READ_ONLY_KEY;
 
 module.exports = [{
 	urls: {
