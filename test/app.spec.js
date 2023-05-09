@@ -33,7 +33,7 @@ describe('lure e2e', () => {
 			.expect(404);
 	});
 
-	it('404 for no recommendations on __lure path', async () => {
+	it('404 for no recommendations on /__lure path', async () => {
 		return request(app)
 			.get('/__lure/v2/content/uuid')
 			.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)
@@ -47,7 +47,7 @@ describe('lure e2e', () => {
 			.expect('Surrogate-Control', 'max-age=600, stale-while-revalidate=60, stale-if-error=86400');
 	});
 
-	it('sets appropriate cache headers for 404 on __lure path', async () => {
+	it('sets appropriate cache headers for 404 on /__lure path', async () => {
 		return request(app)
 			.get('/__lure/v2/content/uuid')
 			.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)

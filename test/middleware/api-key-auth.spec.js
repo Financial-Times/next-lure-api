@@ -1,13 +1,25 @@
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
-const apiKeyAuth = require('../../server/middleware/api-key-auth');
+const proxyquire = require('proxyquire');
+
+const loggerMock = {
+	error: sinon.spy(),
+	info: sinon.spy(),
+	warn: sinon.spy()
+};
+
+const apiKeyAuth = proxyquire('../../server/middleware/api-key-auth', {
+	'@financial-times/n-logger': {
+		default: loggerMock
+	}
+});
+
 process.env.LURE_API_READ_ONLY_KEYS = 'valid-api-key1,valid-api-key2';
 
 function createResponse () {
 	return {
 		headersSent: false,
-		status: sinon.spy(),
 		status: sinon.stub().returns({
 			json: () => {}
 		}),
@@ -27,7 +39,9 @@ describe('verifies API Key', () => {
 		const next = sinon.spy();
 		await apiKeyAuth(request, response, next);
 
+		expect(loggerMock.error).to.have.been.called;
 		expect(next.calledOnce).to.be.true;
+		expect(response.status).to.not.have.been.called;
 	});
 
 	it('should call next and fail if the api key is not valid', async () => {
@@ -35,10 +49,12 @@ describe('verifies API Key', () => {
 			get: () => 'invalid-api-key'
 		};
 
-		const response = createResponse();
+		const response = createResponse({ isStatusSpy: true });
 		const next = sinon.spy();
 		await apiKeyAuth(request, response, next);
 
+		expect(loggerMock.error).to.have.been.called;
 		expect(response.status.calledOnce).to.be.true;
+		expect(response.status).to.have.been.calledWith(401);
 	});
 });

@@ -1,9 +1,9 @@
 const logger = require('@financial-times/n-logger').default;
 
-const validKeys = new Set((process.env.LURE_API_READ_ONLY_KEYS || '').trim().split(/\s*,\s*/g).filter(Boolean));
+const validKeys = new Set((process.env.API_KEY_LIST || '').trim().split(/\s*,\s*/g).filter(Boolean));
 
 if (!validKeys.size) {
-	logger.error({event: 'EMPTY_LURE_API_READ_ONLY_KEYS', message: 'LURE_API_READ_ONLY_KEYS env var has no valid API keys'});
+	logger.error({event: 'EMPTY_API_KEY_LIST', message: 'API_KEY_LIST env var has no valid API keys'});
 }
 
 process.env.INTERNAL_SMOKE_TEST_KEY && validKeys.add(process.env.INTERNAL_SMOKE_TEST_KEY);

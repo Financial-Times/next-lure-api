@@ -30,7 +30,7 @@ module.exports = [
 		},
 	},
 	{
-		description: 'Serve content using __lure/ route (API Key needed)',
+		description: 'Serve content using /__lure/ route (API Key needed)',
 		urls: {
 			'/__lure/v2/content/a31c3c62-b936-11e7-8c12-5661783e5589': {
 				description: 'Case of a existing content Id with a valid Api Key',
