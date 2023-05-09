@@ -1,5 +1,5 @@
 require('dotenv').config();
-const apiKey = process.env.LURE_API_READ_ONLY_KEY;
+const apiKey = process.env.INTERNAL_SMOKE_TEST_KEY;
 
 module.exports = [
 	{

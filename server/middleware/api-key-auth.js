@@ -1,24 +1,20 @@
 const logger = require('@financial-times/n-logger').default;
 
-function validApiKey (apiKey) {
-	// All keys are treated as valid in test environments
-	if (process.env.NODE_ENV === 'test') {
-		return true;
-	}
+const validKeys = new Set((process.env.LURE_API_READ_ONLY_KEYS || '').trim().split(/\s*,\s*/g).filter(Boolean));
 
-	// Permit access if its the correct API KEY
-	if (process.env.LURE_API_READ_ONLY_KEY === apiKey) {
-		return true;
-	}
-
-	// If no matches, deny access
-	return false;
+if (!validKeys.size) {
+	logger.error({event: 'EMPTY_LURE_API_READ_ONLY_KEYS', message: 'LURE_API_READ_ONLY_KEYS env var has no valid API keys'});
 }
 
+process.env.INTERNAL_SMOKE_TEST_KEY && validKeys.add(process.env.INTERNAL_SMOKE_TEST_KEY);
+
 module.exports = async (req, res, next) => {
-	if (!validApiKey(req.get('X-API-KEY'))) {
+	const apiKey = req.get('X-API-KEY');
+	const validApiKey = validKeys.has(apiKey);
+
+	if (!apiKey || !validApiKey) {
 		logger.error({
-			event: 'NO_API_KEY',
+			event: !apiKey ? 'NO_API_KEY' : 'INVALID_API_KEY',
 			body: req.body,
 			method: req.method,
 			headers: req.headers,
