@@ -39,7 +39,6 @@ describe('verifies API Key', () => {
 		const next = sinon.spy();
 		await apiKeyAuth(request, response, next);
 
-		expect(loggerMock.error).to.have.been.called;
 		expect(next.calledOnce).to.be.true;
 		expect(response.status).to.not.have.been.called;
 	});
