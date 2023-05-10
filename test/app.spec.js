@@ -33,9 +33,24 @@ describe('lure e2e', () => {
 			.expect(404);
 	});
 
+	it('404 for no recommendations on /__lure path', async () => {
+		return request(app)
+			.get('/__lure/v2/content/uuid')
+			.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)
+			.expect(404);
+	});
+
 	it('sets appropriate cache headers for 404', async () => {
 		return request(app)
 			.get('/lure/v2/content/uuid')
+			.expect('Cache-Control', 'max-age=0, no-cache, must-revalidate')
+			.expect('Surrogate-Control', 'max-age=600, stale-while-revalidate=60, stale-if-error=86400');
+	});
+
+	it('sets appropriate cache headers for 404 on /__lure path', async () => {
+		return request(app)
+			.get('/__lure/v2/content/uuid')
+			.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)
 			.expect('Cache-Control', 'max-age=0, no-cache, must-revalidate')
 			.expect('Surrogate-Control', 'max-age=600, stale-while-revalidate=60, stale-if-error=86400');
 	});
@@ -47,6 +62,14 @@ describe('lure e2e', () => {
 		it('sets appropriate cache headers', async () => {
 			return request(app)
 				.get('/lure/v2/content/uuid')
+				.expect('Cache-Control', 'max-age=0, no-cache, must-revalidate')
+				.expect('Surrogate-Control', 'max-age=3600, stale-while-revalidate=60, stale-if-error=86400');
+		});
+
+		it('sets appropriate cache headers on __lure path', async () => {
+			return request(app)
+				.get('/__lure/v2/content/uuid')
+				.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)
 				.expect('Cache-Control', 'max-age=0, no-cache, must-revalidate')
 				.expect('Surrogate-Control', 'max-age=3600, stale-while-revalidate=60, stale-if-error=86400');
 		});
@@ -71,6 +94,27 @@ describe('lure e2e', () => {
 				});
 		});
 
+		it('converts concepts to headings and links on __lure path', () => {
+			rawData = {
+				onward2: {
+					items: getItems(5),
+					concept: {
+						prefLabel: 'Stuff',
+						preposition: 'examplePrepos',
+						relativeUrl: '/exampleLink'
+					}
+				},
+			};
+
+			return request(app)
+				.get('/__lure/v2/content/uuid')
+				.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)
+				.then(({body}) => {
+					expect(body.onward2.title).to.equal('More examplePrepos Stuff');
+					expect(body.onward2.titleHref).to.equal('/exampleLink');
+				});
+		});
+
 		context('when fetching v2 style data', () => {
 			before(() => {
 				rawData = {
@@ -83,6 +127,17 @@ describe('lure e2e', () => {
 			it('transforms v2 style data to v2', () => {
 				return request(app)
 					.get('/lure/v2/content/uuid')
+					.then(({body}) => {
+						expect(Array.isArray(body.onward)).to.be.false;
+						expect(body.onward.items.length).to.equal(7);
+						expect(uniqueIds('items', [body.onward])).to.be.true;
+					});
+			});
+
+			it('transforms v2 style data to v2 on __lure path', () => {
+				return request(app)
+					.get('/__lure/v2/content/uuid')
+					.set('x-api-key', process.env.INTERNAL_SMOKE_TEST_KEY)
 					.then(({body}) => {
 						expect(Array.isArray(body.onward)).to.be.false;
 						expect(body.onward.items.length).to.equal(7);
