@@ -23,7 +23,7 @@
   "dependencies": {
     "@financial-times/n-concept-ids": "1.18.0",
     "@financial-times/n-es-client": "4.2.1",
-    "@financial-times/n-express": "26.3.14",
+    "@financial-times/n-express": "27.5.0",
     "@financial-times/n-logger": "10.3.1",
     "cookie-parser": "^1.4.3",
     "express-async-errors": "^3.1.1",
