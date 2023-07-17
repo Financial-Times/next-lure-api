@@ -4,6 +4,9 @@ require('express-async-errors');
 const healthchecks = require('./healthchecks');
 const errorHandler = require('./middleware/error-handler');
 const logger = require('@financial-times/n-logger').default;
+const registerCrashHandler = require('@dotcom-reliability-kit/crash-handler');
+
+registerCrashHandler();
 
 const app = express({
 	systemCode: 'next-lure-api',
