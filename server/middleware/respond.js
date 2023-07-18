@@ -64,6 +64,10 @@ module.exports = (_, res) => {
 	}
 	res.json(response);
 
+	Object.keys(response).forEach(key => {
+		metrics.count(`contentSelection.${key}.${response[key]}`);
+	});
+
 	metrics.count(`flags.onwardJourneyTests.${flags.onwardJourneyTests || 'control'}`);
 	metrics.count(`slots.onward.${Boolean(response.onward)}`);
 	metrics.count(`slots.onward2.${Boolean(response.onward2)}`);
