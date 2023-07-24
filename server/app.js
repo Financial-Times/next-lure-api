@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 require('express-async-errors');
 const healthchecks = require('./healthchecks');
 const errorHandler = require('./middleware/error-handler');
-const logger = require('@financial-times/n-logger').default;
+const createErrorLogger = require('@dotcom-reliability-kit/middleware-log-errors');
 const registerCrashHandler = require('@dotcom-reliability-kit/crash-handler');
 
 registerCrashHandler();
@@ -39,12 +39,12 @@ app.use('/lure', lure);
 
 app.use('/__lure', middleware.apiKeyAuth, lure);
 
-app.use(function logError (error, req, res, next) { // eslint-disable-line no-unused-vars
-	const status = error.statusCode || error.status;
-	if (status !== 404) {
-		logger.error(error);
+app.use(createErrorLogger({
+	filter: (error) => {
+		const status = error.statusCode || error.status;
+		return status !== 404;
 	}
-});
+}));
 
 if (process.env.NODE_ENV !== 'test') {
 	healthchecks.init();
