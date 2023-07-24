@@ -17,7 +17,7 @@
     "url": "https://github.com/Financial-Times/next-lure-api/issues"
   },
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "homepage": "https://github.com/Financial-Times/next-lure-api#readme",
   "dependencies": {
