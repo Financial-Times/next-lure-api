@@ -6,7 +6,7 @@ references:
     &container_config_node
     working_directory: ~/project/build
     docker:
-      - image: cimg/node:16.14-browsers
+      - image: cimg/node:18.17-browsers
 
   workspace_root: &workspace_root ~/project
 
@@ -70,11 +70,9 @@ jobs:
       - run:
           name: Checkout next-ci-shared-helpers
           command: git clone --depth 1
-            git@github.com:Financial-Times/next-ci-shared-helpers.git
+            git@github.com:Financial-Times/next-ci-shared-helpers.git --branch unpin-heroku
             .circleci/shared-helpers
       - *restore_npm_cache
-      - node/install-npm:
-          version: "7"
       - run:
           name: Install project dependencies
           command: make install
@@ -121,7 +119,7 @@ jobs:
             HEROKU_LOGIN: next.developers@ft.com
       - run:
           name: Create and test Heroku review app
-          command: make test-review-app
+          command: NODE_OPTIONS="--no-experimental-fetch" make test-review-app
 
   deploy:
     <<: *container_config_node
@@ -139,7 +137,7 @@ jobs:
           --project-name=Financial-Times/next-lure-api
       - run:
           name: Deploy to production
-          command: make deploy
+          command: NODE_OPTIONS="--no-experimental-fetch" make deploy
 
 workflows:
   version: 2

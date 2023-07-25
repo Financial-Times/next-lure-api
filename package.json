@@ -17,7 +17,7 @@
     "url": "https://github.com/Financial-Times/next-lure-api/issues"
   },
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "homepage": "https://github.com/Financial-Times/next-lure-api#readme",
   "dependencies": {
@@ -61,6 +61,7 @@
     }
   },
   "volta": {
-    "node": "16.14.2"
+    "node": "18.17.0",
+    "npm": "9.8.1"
   }
 }
