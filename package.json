@@ -23,7 +23,7 @@
   "dependencies": {
     "@dotcom-reliability-kit/crash-handler": "^3.0.0",
     "@dotcom-reliability-kit/middleware-log-errors": "^3.0.0",
-    "@financial-times/n-concept-ids": "1.18.0",
+    "@financial-times/n-concept-ids": "2.1.0",
     "@financial-times/n-es-client": "4.2.1",
     "@financial-times/n-express": "^28.0.0",
     "@financial-times/n-logger": "10.3.1",
