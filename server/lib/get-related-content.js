@@ -1,5 +1,5 @@
 const es = require('@financial-times/n-es-client');
-const logger = require('@financial-times/n-logger').default;
+const logger = require('@dotcom-reliability-kit/logger').default;
 
 module.exports = (
 	concept,

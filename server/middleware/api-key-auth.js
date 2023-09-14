@@ -1,4 +1,4 @@
-const logger = require('@financial-times/n-logger').default;
+const logger = require('@dotcom-reliability-kit/logger').default;
 
 const validKeys = new Set((process.env.API_KEY_LIST || '').trim().split(/\s*,\s*/g).filter(Boolean));
 

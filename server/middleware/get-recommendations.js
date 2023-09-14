@@ -1,4 +1,4 @@
-const logger = require('@financial-times/n-logger').default;
+const logger = require('@dotcom-reliability-kit/logger').default;
 
 const relatedContent = require('../signals/related-content');
 
