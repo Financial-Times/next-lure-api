@@ -10,7 +10,7 @@ const loggerMock = {
 };
 
 const apiKeyAuth = proxyquire('../../server/middleware/api-key-auth', {
-	'@financial-times/n-logger': {
+	'@dotcom-reliability-kit/logger': {
 		default: loggerMock
 	}
 });

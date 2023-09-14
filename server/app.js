@@ -12,7 +12,6 @@ const app = express({
 	systemCode: 'next-lure-api',
 	graphiteName: 'lure-api',
 	withFlags: true,
-	withAb: true,
 	healthChecks: healthchecks.checks,
 });
 app.use(cookieParser());
