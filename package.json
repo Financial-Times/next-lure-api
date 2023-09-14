@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@financial-times/n-gage": "^9.0.1",
-    "@financial-times/n-heroku-tools": "^13.0.0",
+    "@financial-times/n-heroku-tools": "^15.0.0",
     "@financial-times/n-test": "^6.1.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
