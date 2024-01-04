@@ -34,10 +34,16 @@
     "http-errors": "^1.8.0"
   },
   "devDependencies": {
+    "@dotcom-tool-kit/backend-heroku-app": "^3.0.12",
+    "@dotcom-tool-kit/eslint": "^3.1.6",
+    "@dotcom-tool-kit/lint-staged-npm": "^3.1.6",
+    "@dotcom-tool-kit/mocha": "^3.1.6",
+    "@financial-times/eslint-config-next": "^7.1.0",
     "@financial-times/n-test": "^6.1.0",
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.1.1",
+    "dotcom-tool-kit": "^3.3.11",
     "eslint": "^7.0.0",
     "fetch-mock": "^9.11.0",
     "istanbul": "^0.4.5",
@@ -48,22 +54,19 @@
     "sinon-chai": "^3.7.0",
     "snyk": "^1.1219.0",
     "supertest": "^3.3.0",
-    "supertest-as-promised": "^4.0.2",
-    "dotcom-tool-kit": "^3.3.11",
-    "@financial-times/eslint-config-next": "^7.1.0",
-    "@dotcom-tool-kit/backend-heroku-app": "^3.0.12",
-    "@dotcom-tool-kit/mocha": "^3.1.6",
-    "@dotcom-tool-kit/eslint": "^3.1.6"
+    "supertest-as-promised": "^4.0.2"
   },
   "husky": {
     "hooks": {
-      "commit-msg": "node_modules/.bin/secret-squirrel-commitmsg",
-      "pre-commit": "node_modules/.bin/secret-squirrel",
-      "pre-push": "make verify -j3"
+      "commit-msg": "dotcom-tool-kit git:commitmsg",
+      "pre-commit": "dotcom-tool-kit git:precommit"
     }
   },
   "volta": {
     "node": "18.17.0",
     "npm": "9.8.1"
+  },
+  "lint-staged": {
+    "**/*.js": "dotcom-tool-kit format:staged test:staged --"
   }
 }
