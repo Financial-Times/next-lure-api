@@ -49,4 +49,4 @@ npm install
 npm start
 ```
 
-Visit `http://local.ft.com:3001/lure/v2/content/<CONTENT_UUID>`
+Visit `https://local.ft.com:5050/lure/v2/content/<CONTENT_UUID>`
