@@ -12,6 +12,8 @@ hooks:
     - Eslint
     - Mocha
 options:
+  "@dotcom-tool-kit/circleci":
+    nodeVersion: "18.17-browsers"
   "@dotcom-tool-kit/mocha":
     files: test/**/*.spec.js
   "@dotcom-tool-kit/heroku":
