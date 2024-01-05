@@ -38,6 +38,7 @@
     "@dotcom-tool-kit/eslint": "^3.1.6",
     "@dotcom-tool-kit/lint-staged-npm": "^3.1.6",
     "@dotcom-tool-kit/mocha": "^3.1.6",
+    "@dotcom-tool-kit/n-test": "^3.2.8",
     "@financial-times/eslint-config-next": "^7.1.0",
     "@financial-times/n-test": "^6.1.0",
     "chai": "^4.3.8",
