@@ -39,3 +39,14 @@ May (in v1, for backwards compatibility) return an array of objects like the abo
 ### Flags
 
 There is a permanent mutlivariate test (MVT) flag called `onwardJourneyTests` that's used for testing new iterations of the onward journey on articles. Ideally we shouldn't be running more than one A/B or MVT test at a time because this makes test results confusing. The idea is to reuse the same flags for all tests and it will feel wrong to have multiple flags in use within the codebase.
+
+## Running locally
+
+```
+git clone git@github.com:Financial-Times/next-lure-api.git
+cd next-lure-api
+npm install
+npm start
+```
+
+Visit `http://local.ft.com:3001/lure/v2/content/<CONTENT_UUID>`
