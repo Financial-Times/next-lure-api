@@ -1,4 +1,3 @@
-require('dotenv').config();
 const apiKey = process.env.INTERNAL_SMOKE_TEST_KEY;
 
 module.exports = [

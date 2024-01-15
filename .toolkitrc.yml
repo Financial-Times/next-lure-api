@@ -1,0 +1,41 @@
+plugins:
+  - "@dotcom-tool-kit/backend-heroku-app"
+  - "@dotcom-tool-kit/mocha"
+  - "@dotcom-tool-kit/eslint"
+  - "@dotcom-tool-kit/lint-staged-npm"
+  - "@dotcom-tool-kit/n-test"
+  - "@dotcom-tool-kit/next-router"
+hooks:
+  run:local:
+    - Node
+    - NextRouter
+  test:local:
+    - Eslint
+    - Mocha
+  test:ci:
+    - Eslint
+    - Mocha
+options:
+  "@dotcom-tool-kit/node":
+    ports: [ 3002 ]
+  "@dotcom-tool-kit/next-router":
+    appName: "lure-api"
+  "@dotcom-tool-kit/circleci":
+    nodeVersion: "18.17-browsers"
+  "@dotcom-tool-kit/mocha":
+    files: test/**/*.spec.js
+  "@dotcom-tool-kit/heroku":
+    pipeline: ft-next-lure-api
+    systemCode: next-lure-api
+    scaling:
+      ft-next-lure-api-eu:
+        web:
+          size: standard-2x
+          quantity: 4
+      ft-next-lure-api-us:
+        web:
+          size: standard-2x
+          quantity: 4
+  "@dotcom-tool-kit/vault":
+    team: next
+    app: next-lure-api

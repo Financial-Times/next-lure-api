@@ -6,7 +6,9 @@ if (!validKeys.size) {
 	logger.error({event: 'EMPTY_API_KEY_LIST', message: 'API_KEY_LIST env var has no valid API keys'});
 }
 
-process.env.INTERNAL_SMOKE_TEST_KEY && validKeys.add(process.env.INTERNAL_SMOKE_TEST_KEY);
+if(process.env.INTERNAL_SMOKE_TEST_KEY && process.env.NODE_ENV !== 'production') {
+	validKeys.add(process.env.INTERNAL_SMOKE_TEST_KEY);
+}
 
 module.exports = async (req, res, next) => {
 	const apiKey = req.get('X-API-KEY');
