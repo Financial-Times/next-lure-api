@@ -3,6 +3,9 @@ const apiKey = process.env.INTERNAL_SMOKE_TEST_KEY;
 module.exports = [
 	{
 		description: 'Serve content using lure/ route (no API Key needed)',
+		headers: {
+			'FT-Next-Backend-Key': process.env.FT_NEXT_BACKEND_KEY
+		},
 		urls: {
 			'/lure/v2/content/a31c3c62-b936-11e7-8c12-5661783e5589': {
 				description: 'Case of a valid, existing content Id',
@@ -30,6 +33,9 @@ module.exports = [
 	},
 	{
 		description: 'Serve content using /__lure/ route (API Key needed)',
+		headers: {
+			'FT-Next-Backend-Key': process.env.FT_NEXT_BACKEND_KEY
+		},
 		urls: {
 			'/__lure/v2/content/a31c3c62-b936-11e7-8c12-5661783e5589': {
 				description: 'Case of a existing content Id with a valid Api Key',
