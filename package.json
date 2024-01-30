@@ -28,7 +28,7 @@
     "@dotcom-reliability-kit/middleware-log-errors": "^3.0.1",
     "@financial-times/n-concept-ids": "2.1.0",
     "@financial-times/n-es-client": "5.0.0",
-    "@financial-times/n-express": "^28.0.2",
+    "@financial-times/n-express": "^29.0.0",
     "cookie-parser": "^1.4.6",
     "express-async-errors": "^3.1.1",
     "http-errors": "^1.8.0"
