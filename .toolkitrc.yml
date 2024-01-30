@@ -36,6 +36,5 @@ options:
         web:
           size: standard-2x
           quantity: 4
-  "@dotcom-tool-kit/vault":
-    team: next
-    app: next-lure-api
+  "@dotcom-tool-kit/doppler":
+    project: next-lure-api
