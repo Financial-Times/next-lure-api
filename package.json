@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/Financial-Times/next-lure-api#readme",
   "dependencies": {
-    "@dotcom-reliability-kit/crash-handler": "^3.0.1",
-    "@dotcom-reliability-kit/logger": "^2.2.8",
-    "@dotcom-reliability-kit/middleware-log-errors": "^3.0.1",
+    "@dotcom-reliability-kit/crash-handler": "^4.0.0",
+    "@dotcom-reliability-kit/logger": "^3.0.0",
+    "@dotcom-reliability-kit/middleware-log-errors": "^4.0.0",
     "@financial-times/n-concept-ids": "2.1.0",
     "@financial-times/n-es-client": "5.0.0",
     "@financial-times/n-express": "^28.0.2",
