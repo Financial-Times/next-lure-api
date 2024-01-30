@@ -31,7 +31,7 @@
     "@financial-times/n-express": "^28.0.2",
     "cookie-parser": "^1.4.6",
     "express-async-errors": "^3.1.1",
-    "http-errors": "^1.8.0"
+    "http-errors": "^2.0.0"
   },
   "devDependencies": {
     "@dotcom-tool-kit/backend-heroku-app": "^3.1.2",
